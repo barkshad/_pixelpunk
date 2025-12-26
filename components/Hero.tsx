@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const Hero: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState({ dd: 0, hh: 0, mm: 0, ss: 0 });
@@ -13,6 +13,10 @@ const Hero: React.FC = () => {
     const timer = setInterval(() => {
       const now = new Date().getTime();
       const distance = dropDate.getTime() - now;
+      if (distance < 0) {
+        clearInterval(timer);
+        return;
+      }
       setTimeLeft({
         dd: Math.floor(distance / (1000 * 60 * 60 * 24)),
         hh: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
@@ -24,7 +28,7 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center items-center pt-32 pb-20 px-6 overflow-hidden">
+    <section className="relative min-h-screen flex flex-col justify-center items-center pt-32 pb-12 px-4 sm:px-6 overflow-hidden">
       {/* Background Animated Elements */}
       <motion.div 
         animate={{ 
@@ -32,7 +36,7 @@ const Hero: React.FC = () => {
           opacity: [0.1, 0.2, 0.1] 
         }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/10 rounded-full blur-[120px] pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[600px] lg:w-[800px] h-[300px] sm:h-[600px] lg:h-[800px] bg-accent/10 rounded-full blur-[80px] sm:blur-[120px] pointer-events-none"
       />
 
       <div className="relative z-10 w-full max-w-7xl flex flex-col items-center">
@@ -40,9 +44,9 @@ const Hero: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col items-center gap-4 mb-10"
+          className="flex flex-col items-center gap-4 mb-8 sm:mb-10"
         >
-           <span className="font-mono text-accent text-[11px] tracking-[0.8em] border border-accent/20 bg-accent/5 backdrop-blur-md px-8 py-2 uppercase rounded-full">
+           <span className="font-mono text-accent text-[9px] sm:text-[11px] tracking-[0.4em] sm:tracking-[0.8em] border border-accent/20 bg-accent/5 backdrop-blur-md px-4 sm:px-8 py-2 uppercase rounded-full whitespace-nowrap">
              ENCRYPTED_STREAM_V4.0
            </span>
         </motion.div>
@@ -51,21 +55,21 @@ const Hero: React.FC = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="text-[14vw] md:text-[12rem] font-black tracking-tighter leading-[0.8] uppercase text-center mb-16 select-none"
+          className="text-[18vw] sm:text-[15vw] lg:text-[12rem] font-black tracking-tighter leading-[0.85] sm:leading-[0.8] uppercase text-center mb-12 sm:mb-16 select-none"
         >
           <span className="block text-white">TAILORING</span>
           <span className="block text-accent text-glow">REALITY</span>
         </motion.h1>
 
-        <div className="grid md:grid-cols-3 gap-12 items-center w-full">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 items-center w-full">
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="hidden md:block glass-panel p-8 rounded-2xl"
+            className="hidden md:block glass-panel p-6 lg:p-8 rounded-2xl"
           >
             <span className="font-mono text-[10px] text-accent/60 tracking-widest uppercase mb-4 block">// PROTOCOL_001</span>
-            <p className="font-sans text-xl font-bold uppercase tracking-tight leading-tight">
+            <p className="font-sans text-lg lg:text-xl font-bold uppercase tracking-tight leading-tight">
               CURATING THE <br/> UNSEEN ARCHIVE <br/> OF MODERN SOCIETY.
             </p>
           </motion.div>
@@ -74,23 +78,23 @@ const Hero: React.FC = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="flex flex-col items-center gap-12"
+            className="flex flex-col items-center gap-8 sm:gap-12"
           >
-             <div className="glass-panel px-12 py-8 rounded-3xl relative overflow-hidden group">
+             <div className="glass-panel px-6 sm:px-12 py-6 sm:py-8 rounded-2xl sm:rounded-3xl relative overflow-hidden group w-full sm:w-auto">
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-accent/50 to-transparent"></div>
                 
-                <div className="flex gap-8 md:gap-12 relative z-10">
+                <div className="flex justify-around sm:justify-center gap-4 sm:gap-8 md:gap-12 relative z-10">
                   {Object.entries(timeLeft).map(([label, val]) => (
                     <div key={label} className="flex flex-col items-center">
                       <motion.span 
                         key={val}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-4xl md:text-5xl font-black text-white"
+                        className="text-2xl sm:text-4xl lg:text-5xl font-black text-white"
                       >
                         {val.toString().padStart(2, '0')}
                       </motion.span>
-                      <span className="font-mono text-[10px] text-accent tracking-[0.3em] font-bold mt-2">{label.toUpperCase()}</span>
+                      <span className="font-mono text-[8px] sm:text-[10px] text-accent tracking-[0.2em] sm:tracking-[0.3em] font-bold mt-2">{label.toUpperCase()}</span>
                     </div>
                   ))}
                 </div>
@@ -99,7 +103,7 @@ const Hero: React.FC = () => {
              <motion.button 
                whileHover={{ scale: 1.05 }}
                whileTap={{ scale: 0.95 }}
-               className="group relative px-20 py-6 bg-accent text-void font-bold text-sm tracking-[0.6em] rounded-full hover:shadow-[0_0_40px_rgba(223,255,0,0.4)] transition-all overflow-hidden"
+               className="group relative px-12 sm:px-20 py-4 sm:py-6 bg-accent text-void font-bold text-xs sm:text-sm tracking-[0.4em] sm:tracking-[0.6em] rounded-full hover:shadow-[0_0_40px_rgba(223,255,0,0.4)] transition-all overflow-hidden w-full sm:w-auto"
              >
                 <span className="relative z-10">DECODE_VAULT</span>
                 <motion.div 
@@ -117,7 +121,7 @@ const Hero: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="hidden md:block text-right"
           >
-            <div className="glass-panel p-8 rounded-2xl inline-block">
+            <div className="glass-panel p-6 lg:p-8 rounded-2xl inline-block">
               <span className="font-mono text-[10px] text-accent/60 tracking-widest uppercase mb-4 block text-left">// SYSTEM_LOG</span>
               <div className="font-mono text-[11px] text-gray-400 space-y-2 uppercase text-left">
                 <p className="flex justify-between gap-8"><span>USER</span> <span className="text-white">GUEST_041</span></p>
@@ -129,16 +133,16 @@ const Hero: React.FC = () => {
         </div>
       </div>
 
-      {/* Dynamic Background Elements */}
+      {/* Dynamic Background Elements - hidden on mobile to reduce clutter */}
       <motion.div 
         animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/4 right-10 w-24 h-24 border border-accent/10 rounded-lg backdrop-blur-sm pointer-events-none"
+        className="hidden sm:block absolute top-1/4 right-10 w-16 lg:w-24 h-16 lg:h-24 border border-accent/10 rounded-lg backdrop-blur-sm pointer-events-none"
       />
       <motion.div 
         animate={{ y: [0, 15, 0], rotate: [0, -8, 0] }}
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute bottom-1/4 left-10 w-32 h-32 border border-accent/10 rounded-full backdrop-blur-sm pointer-events-none"
+        className="hidden sm:block absolute bottom-1/4 left-10 w-24 lg:w-32 h-24 lg:h-32 border border-accent/10 rounded-full backdrop-blur-sm pointer-events-none"
       />
     </section>
   );
