@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SiteContent, Product, ArchiveItem } from '../types';
 import { PRODUCTS, ARCHIVE_ITEMS } from '../constants';
 
@@ -14,6 +14,8 @@ interface CMSContextType {
   deleteArchiveItem: (id: string) => Promise<void>;
   resetToDefaults: () => Promise<void>;
 }
+
+const STORAGE_KEY = 'pixelpunk_archive_cms_v1';
 
 const DEFAULT_CONTENT: SiteContent = {
   hero: {
@@ -40,18 +42,76 @@ const DEFAULT_CONTENT: SiteContent = {
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
 
 export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [content] = useState<SiteContent>(DEFAULT_CONTENT);
-  const [isLoading] = useState(false);
+  const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Pure static stubs
-  const updateHero = async () => {};
-  const updateMarquee = async () => {};
-  const updateFomo = async () => {};
-  const upsertProduct = async () => {};
-  const deleteProduct = async () => {};
-  const upsertArchiveItem = async () => {};
-  const deleteArchiveItem = async () => {};
-  const resetToDefaults = async () => {};
+  // Initial Load from LocalStorage
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        setContent(JSON.parse(saved));
+      } catch (e) {
+        console.error("Failed to parse saved archive content", e);
+      }
+    }
+    setIsLoading(false);
+  }, []);
+
+  // Helper to persist changes
+  const saveToStorage = (newContent: SiteContent) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newContent));
+    setContent(newContent);
+  };
+
+  const updateHero = async (hero: SiteContent['hero']) => {
+    saveToStorage({ ...content, hero });
+  };
+
+  const updateMarquee = async (marquee: string[]) => {
+    saveToStorage({ ...content, marquee });
+  };
+
+  const updateFomo = async (fomoMessages: string[]) => {
+    saveToStorage({ ...content, fomoMessages });
+  };
+
+  const upsertProduct = async (product: Product) => {
+    const newProducts = [...content.products];
+    const index = newProducts.findIndex(p => p.id === product.id);
+    if (index >= 0) {
+      newProducts[index] = product;
+    } else {
+      newProducts.unshift(product);
+    }
+    saveToStorage({ ...content, products: newProducts });
+  };
+
+  const deleteProduct = async (id: string) => {
+    saveToStorage({ ...content, products: content.products.filter(p => p.id !== id) });
+  };
+
+  const upsertArchiveItem = async (item: ArchiveItem) => {
+    const newItems = [...content.archiveItems];
+    const index = newItems.findIndex(i => i.id === item.id);
+    if (index >= 0) {
+      newItems[index] = item;
+    } else {
+      newItems.unshift(item);
+    }
+    saveToStorage({ ...content, archiveItems: newItems });
+  };
+
+  const deleteArchiveItem = async (id: string) => {
+    saveToStorage({ ...content, archiveItems: content.archiveItems.filter(i => i.id !== id) });
+  };
+
+  const resetToDefaults = async () => {
+    if (confirm("Reset all site content to defaults? This will overwrite your local changes.")) {
+      localStorage.removeItem(STORAGE_KEY);
+      setContent(DEFAULT_CONTENT);
+    }
+  };
 
   return (
     <CMSContext.Provider value={{ 

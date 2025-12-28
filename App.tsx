@@ -12,6 +12,7 @@ import CartSidebar from './components/CartSidebar';
 import LoginModal from './components/LoginModal';
 import ProductModal from './components/ProductModal';
 import PolicyModal from './components/PolicyModal';
+import AdminPanel from './components/AdminPanel';
 import { Product } from './types';
 import { POLICY_CONTENT } from './constants';
 import { CMSProvider, useCMS } from './context/CMSContext';
@@ -141,6 +142,8 @@ const AppContent: React.FC = () => {
       </main>
       
       <Footer onOpenPolicy={(title, id) => setActivePolicy({ title, id })} />
+
+      <AdminPanel />
 
       <AnimatePresence>
         {fomoNotice && (
