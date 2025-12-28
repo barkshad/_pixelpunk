@@ -4,47 +4,48 @@ import { ARCHIVE_ITEMS } from '../constants';
 
 const Archive: React.FC = () => {
   return (
-    <section id="archive" className="py-20 sm:py-32 bg-[#050505] border-y border-white/5 overflow-hidden">
-      <div className="container mx-auto px-4 sm:px-6 mb-12 sm:mb-20">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
-          <div className="space-y-3 sm:space-y-4">
-            <span className="font-mono text-accent text-[9px] sm:text-[11px] tracking-[0.4em] sm:tracking-[0.5em] block uppercase">// HISTORICAL_LOGS</span>
-            <h2 className="text-4xl sm:text-6xl font-black tracking-tighter uppercase leading-none">THE ARCHIVE</h2>
+    <section id="archive" className="py-24 sm:py-32 bg-dark relative overflow-hidden">
+      <div className="container mx-auto px-6 mb-16">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
+          <div className="space-y-4 max-w-xl">
+            <span className="text-accent text-xs font-bold tracking-[0.4em] uppercase">// Historical Records</span>
+            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight uppercase">The Archive</h2>
+            <p className="text-slate-400 font-medium">A curated history of drops, styling, and archival research.</p>
           </div>
-          <button className="font-mono text-[9px] sm:text-[11px] tracking-[0.3em] sm:tracking-[0.4em] border-b-2 border-accent pb-1 sm:pb-2 hover:bg-accent hover:text-void px-3 sm:px-4 transition-all uppercase">
-            EXPLORE_ALL_RECORDS
+          <button className="px-8 py-4 rounded-2xl bg-slate-900 border border-white/10 text-sm font-bold text-slate-200 hover:bg-slate-800 transition-all uppercase tracking-widest">
+            View All Logs
           </button>
         </div>
       </div>
 
-      <div className="flex overflow-x-auto pb-12 sm:pb-16 hide-scrollbar snap-x scroll-smooth">
-        <div className="flex gap-8 sm:gap-12 px-4 sm:px-6 md:pl-[10%]">
+      <div className="flex overflow-x-auto pb-12 hide-scrollbar snap-x scroll-smooth">
+        <div className="flex gap-10 px-6 md:pl-[10%]">
           {ARCHIVE_ITEMS.map((item) => (
-            <div key={item.id} className="min-w-[280px] xs:min-w-[320px] sm:min-w-[450px] md:min-w-[550px] snap-center group">
-              <div className="relative aspect-[16/10] mb-6 sm:mb-8 overflow-hidden rounded-xl border border-white/10 group-hover:border-accent transition-all duration-500">
+            <div key={item.id} className="min-w-[300px] md:min-w-[480px] snap-center group">
+              <div className="relative aspect-[4/3] mb-8 overflow-hidden rounded-[3rem] border border-white/5 group-hover:border-primary/50 transition-all duration-500 shadow-soft">
                 <img
                   src={item.imageUrl}
                   alt={item.title}
                   loading="lazy"
-                  className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-void via-void/30 to-transparent"></div>
-                <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 right-4">
-                  <div className="flex flex-wrap gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="absolute inset-0 bg-gradient-to-t from-darker via-darker/20 to-transparent"></div>
+                <div className="absolute bottom-10 left-10 right-10">
+                  <div className="flex flex-wrap gap-3 mb-4">
                     {item.tags.map(tag => (
-                      <span key={tag} className="font-mono text-[7px] sm:text-[8px] text-accent border border-accent/40 px-2 py-0.5 uppercase whitespace-nowrap">{tag}</span>
+                      <span key={tag} className="text-[10px] font-bold text-accent bg-darker/60 backdrop-blur-md border border-accent/30 px-3 py-1 rounded-full uppercase tracking-wider">{tag}</span>
                     ))}
                   </div>
-                  <h4 className="text-2xl sm:text-4xl font-black tracking-tighter uppercase line-clamp-1">{item.title}</h4>
-                  <span className="font-mono text-[9px] sm:text-[10px] text-white/40 tracking-[0.3em] sm:tracking-[0.4em] block mt-1 sm:mt-2">{item.date}</span>
+                  <h4 className="text-3xl md:text-4xl font-extrabold tracking-tight uppercase mb-2 group-hover:text-primary transition-colors">{item.title}</h4>
+                  <div className="text-[10px] font-bold text-slate-400 tracking-[0.3em] uppercase">{item.date}</div>
                 </div>
               </div>
-              <p className="font-sans text-xs sm:text-sm text-gray-500 font-bold uppercase tracking-tight px-1 max-w-lg leading-relaxed">
+              <p className="text-slate-400 font-medium px-4 max-w-md leading-relaxed">
                 {item.description}
               </p>
             </div>
           ))}
-          <div className="min-w-[20px] sm:min-w-[100px]"></div>
+          <div className="min-w-[50px]"></div>
         </div>
       </div>
     </section>

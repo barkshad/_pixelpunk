@@ -4,24 +4,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>_pixelpunk | Premium Digital Archive</title>
+    <title>_pixelpunk | Professional Digital Archive</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              accent: '#DFFF00',
-              void: '#010101',
-              glass: 'rgba(255, 255, 255, 0.03)',
-              glassBorder: 'rgba(255, 255, 255, 0.08)',
+              primary: '#6366F1', // Indigo 500
+              secondary: '#0EA5E9', // Sky 500
+              accent: '#22D3EE', // Cyan 400
+              success: '#10B981', // Emerald 500
+              dark: '#0F172A', // Slate 900
+              darker: '#020617', // Slate 950
+              card: '#1E293B', // Slate 800
+              border: 'rgba(255, 255, 255, 0.1)',
             },
             fontFamily: {
-              sans: ['Syne', 'sans-serif'],
-              mono: ['Space Mono', 'monospace'],
+              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+              display: ['"Plus Jakarta Sans"', 'sans-serif'],
+              mono: ['"JetBrains Mono"', 'monospace'],
             },
             animation: {
               'pulse-slow': 'pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -30,7 +35,7 @@
             keyframes: {
               float: {
                 '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-20px)' },
+                '50%': { transform: 'translateY(-12px)' },
               }
             }
           }
@@ -38,60 +43,67 @@
       }
     </script>
     <style>
-      :root {
-        --accent: #DFFF00;
-        --bg: #010101;
-      }
       body {
         margin: 0;
         padding: 0;
-        background-color: var(--bg);
-        color: #ffffff;
-        font-family: 'Syne', sans-serif;
+        background-color: #0F172A;
+        color: #F8FAFC;
+        font-family: 'Plus Jakarta Sans', sans-serif;
         overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
       }
-      .glass-panel {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+      .glass-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
       }
-      .text-glow {
-        text-shadow: 0 0 15px rgba(223, 255, 0, 0.5);
+      .btn-primary {
+        background: linear-gradient(135deg, #6366F1 0%, #0EA5E9 100%);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      .perspective-1000 {
-        perspective: 1000px;
+      .btn-primary:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 12px 24px -8px rgba(99, 102, 241, 0.5);
+      }
+      .btn-primary:active {
+        transform: translateY(0) scale(0.98);
       }
       ::-webkit-scrollbar {
-        width: 4px;
+        width: 10px;
       }
       ::-webkit-scrollbar-track {
-        background: #010101;
+        background: #020617;
       }
       ::-webkit-scrollbar-thumb {
-        background: var(--accent);
+        background: #334155;
+        border-radius: 10px;
+        border: 2px solid #020617;
       }
-      .bg-mesh {
-        background: 
-          radial-gradient(circle at 0% 0%, rgba(223, 255, 0, 0.05) 0%, transparent 50%),
-          radial-gradient(circle at 100% 100%, rgba(223, 255, 0, 0.03) 0%, transparent 50%);
+      ::-webkit-scrollbar-thumb:hover {
+        background: #6366F1;
+      }
+      .text-balance {
+        text-wrap: balance;
+      }
+      .shadow-soft {
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
       }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "vite": "https://esm.sh/vite@^7.3.0",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
-    "framer-motion": "https://esm.sh/framer-motion@^12.23.26"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
 </head>
-<body class="bg-mesh">
+<body class="selection:bg-primary/30 selection:text-white">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

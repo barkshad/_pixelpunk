@@ -5,128 +5,92 @@ import { motion, AnimatePresence } from 'framer-motion';
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [time, setTime] = useState(new Date().toLocaleTimeString());
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    const timer = setInterval(() => setTime(new Date().toLocaleTimeString()), 1000);
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearInterval(timer);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
-    { name: 'VAULT', href: '#vault' },
-    { name: 'ARCHIVE', href: '#archive' },
-    { name: 'BOUNTY', href: '#services' },
-    { name: 'WA', href: 'https://wa.me/yournumber', external: true },
+    { name: 'Collections', href: '#vault' },
+    { name: 'Archive', href: '#archive' },
+    { name: 'Request Find', href: '#services' },
   ];
 
-  const handleLinkClick = () => setIsMenuOpen(false);
-
   return (
-    <>
-      <motion.header 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className={`fixed top-4 sm:top-8 left-1/2 -translate-x-1/2 w-[94%] sm:w-[90%] md:w-[85%] max-w-7xl z-[100] transition-all duration-500 rounded-2xl sm:rounded-full ${isScrolled || isMenuOpen ? 'glass-panel px-4 sm:px-8 py-3 sm:py-4' : 'px-4 py-4 bg-transparent'}`}
-      >
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4 lg:gap-10">
-            <a href="#" className="text-xl sm:text-2xl font-black tracking-tighter hover:text-accent transition-all flex items-center gap-2 group">
-              <span className="bg-accent text-void px-1.5 sm:px-2 rounded-md sm:rounded-lg group-hover:rotate-12 transition-transform">_</span>
-              PIXELPUNK
-            </a>
-            
-            <div className="hidden lg:flex items-center gap-4 border-l border-white/10 pl-10 font-mono text-[10px] text-gray-500 uppercase tracking-[0.5em]">
-              <div className="relative">
-                <div className="w-2 h-2 bg-accent rounded-full animate-ping absolute inset-0"></div>
-                <div className="w-2 h-2 bg-accent rounded-full relative"></div>
-              </div>
-              ARCHIVE_SYNC: {time}
-            </div>
+    <motion.header 
+      initial={{ y: -50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
+        isScrolled ? 'bg-dark/80 backdrop-blur-lg border-b border-white/5 py-4' : 'bg-transparent py-6'
+      }`}
+    >
+      <div className="container mx-auto px-6 flex justify-between items-center">
+        <a href="#" className="flex items-center gap-2 group">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-bold text-white group-hover:rotate-6 transition-transform">
+            P
           </div>
-          
-          <nav className="hidden md:flex items-center space-x-6 lg:space-x-12">
+          <span className="text-xl font-extrabold tracking-tight font-display">
+            pixelpunk
+          </span>
+        </a>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-10">
+          {navLinks.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+            >
+              {link.name}
+            </a>
+          ))}
+          <button className="btn-primary px-6 py-2.5 rounded-full text-sm font-bold text-white">
+            Log In
+          </button>
+        </nav>
+
+        {/* Mobile Toggle */}
+        <button 
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden p-2 text-slate-300"
+        >
+          {isMenuOpen ? (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          ) : (
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+          )}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="md:hidden absolute top-full left-0 right-0 bg-dark border-b border-white/5 p-6 space-y-4"
+          >
             {navLinks.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                target={link.external ? '_blank' : '_self'}
-                rel={link.external ? 'noopener noreferrer' : ''}
-                className="font-mono text-[10px] lg:text-[11px] tracking-[0.4em] lg:tracking-[0.5em] text-white/70 hover:text-accent transition-all relative group py-2"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-lg font-semibold text-slate-200"
               >
                 {link.name}
-                <motion.span 
-                  className="absolute -bottom-1 left-0 w-0 h-[2px] bg-accent"
-                  whileHover={{ width: '100%' }}
-                  transition={{ duration: 0.3 }}
-                />
               </a>
             ))}
-            
-            <button className="glass-panel px-4 lg:px-6 py-2 rounded-full font-mono text-[10px] tracking-widest text-accent border-accent/20 hover:bg-accent/10 transition-colors">
-              LOGIN_ID
+            <button className="w-full btn-primary py-4 rounded-xl font-bold text-white">
+              Log In
             </button>
-          </nav>
-
-          {/* Mobile Menu Button */}
-          <button 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5"
-            aria-label="Toggle menu"
-          >
-            <motion.span 
-              animate={isMenuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-              className="w-6 h-[2px] bg-white rounded-full origin-center"
-            />
-            <motion.span 
-              animate={isMenuOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="w-6 h-[2px] bg-white rounded-full"
-            />
-            <motion.span 
-              animate={isMenuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-              className="w-6 h-[2px] bg-white rounded-full origin-center"
-            />
-          </button>
-        </div>
-
-        {/* Mobile Navigation Dropdown */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="md:hidden overflow-hidden"
-            >
-              <div className="flex flex-col gap-6 pt-8 pb-4 px-2">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.name}
-                    href={link.href}
-                    onClick={handleLinkClick}
-                    target={link.external ? '_blank' : '_self'}
-                    rel={link.external ? 'noopener noreferrer' : ''}
-                    className="font-mono text-[12px] tracking-[0.6em] text-white/80 hover:text-accent border-b border-white/5 pb-2"
-                  >
-                    {link.name}
-                  </a>
-                ))}
-                <button className="w-full py-4 glass-panel rounded-xl font-mono text-[10px] tracking-[0.4em] text-accent border-accent/30 bg-accent/5">
-                  INITIALIZE_LOGIN
-                </button>
-                <div className="pt-4 font-mono text-[9px] text-gray-500 uppercase tracking-widest text-center">
-                   SYNC_ID: {time}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.header>
-    </>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 };
 
