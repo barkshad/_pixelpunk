@@ -16,6 +16,7 @@ import {
 interface CMSContextType {
   content: SiteContent;
   isLoading: boolean;
+  isOffline: boolean;
   updateHero: (hero: SiteContent['hero']) => Promise<void>;
   updateMarquee: (marquee: string[]) => Promise<void>;
   updateFomo: (fomo: string[]) => Promise<void>;
@@ -64,6 +65,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [isOffline, setIsOffline] = useState(false);
 
   // 1. Handle Authentication State
   useEffect(() => {
@@ -77,6 +79,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             // Even if auth fails, we set a dummy user state to allow the app to 
             // proceed to 'fetchData' (which will fall back to local storage)
             setUser({ isAnonymous: true, uid: 'offline-fallback' });
+            setIsOffline(true);
         });
       }
     });
@@ -106,6 +109,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       // Then Try Cloud Sync
       try {
         if (!db) throw new Error("Firestore not initialized");
+        if (isOffline) throw new Error("Offline mode active");
 
         // Fetch Global Config
         const configRef = doc(db, 'site_config', 'main');
@@ -150,11 +154,19 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         setContent(syncedContent);
         saveLocal(syncedContent);
+        setIsOffline(false); // We are successfully online
 
       } catch (error: any) {
         if (error.code === 'permission-denied') {
-            console.warn("⚠️ Firestore Permission Denied. Using Local Storage. Ensure your Firestore Rules allow reads/writes for authenticated users.");
-        } else {
+            console.warn("⚠️ FIRESTORE ACCESS DENIED. Switching to Offline Mode.");
+            console.warn("👉 TO FIX THIS: Go to Firebase Console > Firestore Database > Rules");
+            console.warn("👉 CHANGE RULES TO: allow read, write: if request.auth != null;");
+            setIsOffline(true);
+        } 
+        else if (error.message === "Offline mode active") {
+            // silent ignore
+        }
+        else {
             console.error("Firestore sync error:", error);
         }
       } finally {
@@ -164,9 +176,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]); // Runs when 'user' state changes (Auth Complete)
+  }, [user]); 
 
-  // Update Wrappers: Update State -> Save Local -> Try Save Cloud
+  // Update Wrappers: Update State -> Save Local -> Try Save Cloud (if online)
 
   const updateHero = async (hero: SiteContent['hero']) => {
     setContent(prev => {
@@ -174,7 +186,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         saveLocal(next);
         return next;
     });
-    try { if(db) await setDoc(doc(db, 'site_config', 'main'), { hero }, { merge: true }); } catch(e) {}
+    if (!isOffline && db) {
+       try { await setDoc(doc(db, 'site_config', 'main'), { hero }, { merge: true }); } catch(e) {}
+    }
   };
 
   const updateMarquee = async (marquee: string[]) => {
@@ -183,7 +197,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         saveLocal(next);
         return next;
     });
-    try { if(db) await setDoc(doc(db, 'site_config', 'main'), { marquee }, { merge: true }); } catch(e) {}
+    if (!isOffline && db) {
+       try { await setDoc(doc(db, 'site_config', 'main'), { marquee }, { merge: true }); } catch(e) {}
+    }
   };
 
   const updateFomo = async (fomoMessages: string[]) => {
@@ -192,7 +208,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         saveLocal(next);
         return next;
     });
-    try { if(db) await setDoc(doc(db, 'site_config', 'main'), { fomoMessages }, { merge: true }); } catch(e) {}
+    if (!isOffline && db) {
+       try { await setDoc(doc(db, 'site_config', 'main'), { fomoMessages }, { merge: true }); } catch(e) {}
+    }
   };
 
   const upsertProduct = async (product: Product) => {
@@ -209,7 +227,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return next;
     });
 
-    try { if(db) await setDoc(doc(db, 'products', product.id), product); } catch(e) {}
+    if (!isOffline && db) {
+       try { await setDoc(doc(db, 'products', product.id), product); } catch(e) {}
+    }
   };
 
   const deleteProduct = async (id: string) => {
@@ -218,7 +238,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         saveLocal(next);
         return next;
     });
-    try { if(db) await deleteDoc(doc(db, 'products', id)); } catch(e) {}
+    if (!isOffline && db) {
+       try { await deleteDoc(doc(db, 'products', id)); } catch(e) {}
+    }
   };
 
   const upsertArchiveItem = async (item: ArchiveItem) => {
@@ -235,7 +257,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return next;
     });
 
-    try { if(db) await setDoc(doc(db, 'archive_items', item.id), item); } catch(e) {}
+    if (!isOffline && db) {
+       try { await setDoc(doc(db, 'archive_items', item.id), item); } catch(e) {}
+    }
   };
 
   const deleteArchiveItem = async (id: string) => {
@@ -244,7 +268,9 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         saveLocal(next);
         return next;
     });
-    try { if(db) await deleteDoc(doc(db, 'archive_items', id)); } catch(e) {}
+    if (!isOffline && db) {
+       try { await deleteDoc(doc(db, 'archive_items', id)); } catch(e) {}
+    }
   };
 
   const resetToDefaults = async () => {
@@ -254,6 +280,12 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // 1. Reset Local
     setContent(DEFAULT_CONTENT);
     saveLocal(DEFAULT_CONTENT);
+
+    if (isOffline) {
+        setIsLoading(false);
+        alert("Reset complete (Local Only - Offline Mode Active)");
+        return;
+    }
 
     // 2. Try Reset Cloud
     try {
@@ -289,7 +321,7 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return (
     <CMSContext.Provider value={{ 
-      content, isLoading, updateHero, updateMarquee, updateFomo, 
+      content, isLoading, isOffline, updateHero, updateMarquee, updateFomo, 
       upsertProduct, deleteProduct, upsertArchiveItem, deleteArchiveItem,
       resetToDefaults
     }}>

@@ -5,7 +5,7 @@ import { ItemStatus, Product } from '../types';
 import { uploadToCloudinary } from '../services/cloudinary';
 
 const AdminPanel: React.FC = () => {
-  const { content, isLoading, updateHero, updateMarquee, updateFomo, upsertProduct, deleteProduct, resetToDefaults } = useCMS();
+  const { content, isLoading, isOffline, updateHero, updateMarquee, updateFomo, upsertProduct, deleteProduct, resetToDefaults } = useCMS();
   const [isOpen, setIsOpen] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -132,8 +132,8 @@ const AdminPanel: React.FC = () => {
             Wipe & Factory Reset
           </button>
           <div className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest text-center flex items-center justify-center gap-2">
-            <span className="w-1.5 h-1.5 bg-success rounded-full"></span>
-            Local Mode Active
+            <span className={`w-1.5 h-1.5 rounded-full ${isOffline ? 'bg-orange-500' : 'bg-green-500'}`}></span>
+            {isOffline ? 'Offline / Local Mode' : 'Cloud Sync Active'}
           </div>
         </div>
       </div>
