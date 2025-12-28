@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Product } from '../types';
@@ -11,101 +12,125 @@ interface ProductModalProps {
 
 const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCart }) => {
   return (
-    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 sm:p-8">
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-darker/95 backdrop-blur-md"
+        className="absolute inset-0 bg-darker/98 backdrop-blur-xl"
       />
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="relative w-full max-w-5xl bg-zinc-900 rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col lg:flex-row max-h-[90vh]"
+        exit={{ opacity: 0, scale: 0.95, y: 40 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="relative w-full max-w-6xl bg-zinc-900 border border-white/10 rounded-[3rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col lg:flex-row h-[90vh] lg:h-[80vh]"
       >
+        {/* Close Button Mobile */}
+        <button 
+          onClick={onClose}
+          className="absolute top-6 right-6 z-50 p-3 rounded-full bg-black/50 backdrop-blur-md text-white border border-white/10 hover:bg-white/10 transition-colors lg:hidden"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+
         {/* Left Side: Large Image */}
-        <div className="w-full lg:w-1/2 relative bg-zinc-800 h-64 lg:h-auto">
+        <div className="w-full lg:w-[55%] relative bg-black flex-shrink-0 group overflow-hidden">
           <img 
             src={optimizeCloudinaryUrl(product.imageUrl, 1200)} 
             alt={product.name} 
-            className="w-full h-full object-cover grayscale-[0.1] hover:grayscale-0 transition-all duration-700"
+            className="w-full h-full object-cover grayscale-[0.1] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[3s] ease-out"
           />
-          <div className="absolute top-6 left-6 flex flex-col gap-2">
-            <span className="bg-primary px-4 py-2 rounded-full text-[10px] font-bold text-white uppercase tracking-widest shadow-lg">
-              Verified Original
+          <div className="absolute top-10 left-10 flex flex-col gap-3">
+            <span className="bg-primary px-6 py-2.5 rounded-full text-[10px] font-black text-white uppercase tracking-[0.3em] shadow-2xl border border-white/10">
+              Artifact Verified
+            </span>
+            <span className="bg-zinc-950/80 backdrop-blur-md px-6 py-2.5 rounded-full text-[10px] font-bold text-zinc-300 uppercase tracking-[0.3em] border border-white/5">
+              Ref No. {product.id}
             </span>
           </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
         </div>
 
         {/* Right Side: Information */}
-        <div className="flex-1 p-8 lg:p-14 overflow-y-auto hide-scrollbar flex flex-col">
-          <button 
-            onClick={onClose}
-            className="absolute top-6 right-6 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
-
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <span className="text-accent font-serif italic text-xl">{product.category} — {product.era}</span>
-              <h2 className="text-4xl lg:text-5xl font-serif font-medium leading-tight">{product.name}</h2>
-              <div className="text-3xl font-serif text-zinc-400 italic">{product.price}</div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="p-6 bg-zinc-800/50 rounded-2xl border border-white/5">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">The Story Behind the Piece</h4>
-                <p className="text-zinc-300 leading-relaxed mb-4">
-                  {product.provenance}
-                </p>
-                <p className="text-zinc-400 text-sm italic">
-                  "This item was selected because its silhouette is more relevant today than when it was first made. It's the ultimate 'if you know, you know' addition to your wardrobe."
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-5 rounded-2xl bg-zinc-800/30 border border-white/5">
-                  <div className="text-2xl mb-2">🌿</div>
-                  <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Planet Impact</div>
-                  <div className="text-lg font-bold text-success">{product.carbonSaved} Carbon Saved</div>
-                </div>
-                <div className="p-5 rounded-2xl bg-zinc-800/30 border border-white/5">
-                  <div className="text-2xl mb-2">🧵</div>
-                  <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Wearability</div>
-                  <div className="text-lg font-bold text-white">Daily Ready</div>
-                </div>
-              </div>
-
+        <div className="flex-1 flex flex-col overflow-hidden bg-zinc-900">
+          <div className="p-10 lg:p-16 overflow-y-auto hide-scrollbar flex-1">
+            <div className="flex justify-between items-start mb-10">
               <div className="space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 ml-1">Archive Details</h4>
-                <div className="flex flex-wrap gap-2">
-                  {product.details.map((detail, idx) => (
-                    <span key={idx} className="px-4 py-2 rounded-xl bg-zinc-800 border border-white/5 text-xs font-medium text-zinc-300">
-                      {detail}
-                    </span>
-                  ))}
+                <span className="text-primary font-serif italic text-2xl drop-shadow-sm">{product.category} Archive</span>
+                <h2 className="text-5xl lg:text-6xl font-serif font-medium leading-[0.9] text-white max-w-md">{product.name}</h2>
+              </div>
+              <button 
+                onClick={onClose}
+                className="hidden lg:flex p-3 rounded-full bg-white/5 hover:bg-white/10 transition-colors text-zinc-400 hover:text-white"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div className="space-y-12">
+              <div className="flex items-baseline gap-6">
+                 <div className="text-5xl font-serif text-white italic font-light tracking-wide">{product.price}</div>
+                 <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.4em] border-l border-white/10 pl-6 h-6 flex items-center">{product.era} Origin</div>
+              </div>
+
+              <div className="space-y-10">
+                <div className="p-10 bg-zinc-800/40 rounded-[2.5rem] border border-white/5 shadow-inner relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-primary/30"></div>
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-6">Archive Provenance</h4>
+                  <p className="text-zinc-300 leading-relaxed text-lg italic mb-6">
+                    "{product.provenance}"
+                  </p>
+                  <p className="text-zinc-500 text-sm font-medium leading-relaxed">
+                    This piece was recovered during an archive sweep in Berlin, identified by its unique structural ribbing and experimental late-century finish.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="p-8 rounded-[2.5rem] bg-zinc-800/20 border border-white/5 group hover:border-success/30 transition-colors">
+                    <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">🌿</div>
+                    <div className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-2">Eco Performance</div>
+                    <div className="text-xl font-bold text-success drop-shadow-[0_0_10px_rgba(16,185,129,0.2)]">{product.carbonSaved} Offset</div>
+                  </div>
+                  <div className="p-8 rounded-[2.5rem] bg-zinc-800/20 border border-white/5 group hover:border-primary/30 transition-colors">
+                    <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">🧵</div>
+                    <div className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-2">Archival Grade</div>
+                    <div className="text-xl font-bold text-white uppercase tracking-widest">Pristine</div>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500 ml-2">Construction Indicators</h4>
+                  <div className="flex flex-wrap gap-3">
+                    {product.details.map((detail, idx) => (
+                      <span key={idx} className="px-6 py-3 rounded-2xl bg-zinc-800/50 border border-white/5 text-[11px] font-bold text-zinc-300 uppercase tracking-widest hover:bg-zinc-800 hover:text-primary transition-all cursor-default">
+                        {detail}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="pt-6 mt-auto">
-              <button 
-                onClick={() => { onAddToCart(product); onClose(); }}
-                className="w-full btn-vintage py-6 rounded-full text-lg shadow-2xl active:scale-95 transition-all"
-              >
-                Claim This Unique Item
-              </button>
-              <div className="flex flex-col items-center gap-2 mt-4">
-                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
-                  Secure Checkout • Worldwide Express Shipping
-                </p>
-                <p className="text-[10px] text-zinc-400 font-medium">
-                  Once sold, this specific item will never return to the shop.
-                </p>
+          <div className="p-10 lg:p-14 bg-zinc-950/50 border-t border-white/5 backdrop-blur-md">
+            <button 
+              onClick={() => { onAddToCart(product); onClose(); }}
+              className="w-full btn-vintage py-7 rounded-full text-lg shadow-[0_20px_50px_rgba(0,0,0,0.5)] active:scale-[0.98] transition-all font-bold tracking-[0.2em] uppercase"
+            >
+              Secure Unique Ownership
+            </button>
+            <div className="flex flex-col items-center gap-3 mt-6">
+              <div className="flex items-center gap-3">
+                 <span className="w-1.5 h-1.5 bg-success rounded-full animate-pulse"></span>
+                 <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.4em]">
+                   Global Log: Currently Available
+                 </p>
               </div>
+              <p className="text-[10px] text-zinc-600 font-medium italic text-center max-w-xs">
+                Acquiring this artifact secures its removal from the public vault permanently.
+              </p>
             </div>
           </div>
         </div>
