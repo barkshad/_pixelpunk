@@ -1,7 +1,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import 'firebase/firestore'; // Ensures Firestore service is registered before any components attempt to use it.
+import 'firebase/firestore';
 import App from './App';
 
 const rootElement = document.getElementById('root');
