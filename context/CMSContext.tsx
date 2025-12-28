@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SiteContent, Product, ArchiveItem } from '../types';
 import { PRODUCTS, ARCHIVE_ITEMS } from '../constants';
 import { db, auth } from '../services/firebase';
-import { signInAnonymously } from "firebase/auth";
+import { signInAnonymously, onAuthStateChanged } from "firebase/auth";
 import { 
   doc, 
   getDoc, 
@@ -48,134 +48,151 @@ const DEFAULT_CONTENT: SiteContent = {
   archiveItems: ARCHIVE_ITEMS
 };
 
+// Helper for Local Storage Persistence
+const STORAGE_KEY = 'pixelpunk_cms_v1';
+const saveLocal = (data: SiteContent) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.error("Local storage save failed", e);
+  }
+};
+
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
 
 export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
 
-  // Fetch data from Firestore on mount
+  // 1. Handle Authentication State
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        // If no user, trigger anonymous sign-in
+        signInAnonymously(auth).catch((error) => {
+            console.warn("Anonymous auth failed:", error.message);
+            // Even if auth fails, we set a dummy user state to allow the app to 
+            // proceed to 'fetchData' (which will fall back to local storage)
+            setUser({ isAnonymous: true, uid: 'offline-fallback' });
+        });
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 2. Fetch Data (Waits for User State)
+  useEffect(() => {
+    if (!user) return; // Wait for auth to settle
+
     const fetchData = async () => {
       setIsLoading(true);
+      
+      // Load Local Storage First (Instant UI)
       try {
-        if (!db) throw new Error("Firestore is not initialized");
-        
-        // Ensure user is authenticated anonymously to bypass basic security rules
-        // We wrap this in a try/catch because if "Anonymous" provider is disabled in Firebase Console,
-        // it throws 'auth/configuration-not-found'. We want to proceed anyway (might have public rules).
-        if (!auth.currentUser) {
-           try {
-             await signInAnonymously(auth);
-           } catch (authError: any) {
-             console.warn("⚠️ Authentication Warning: Could not sign in anonymously.", authError.code);
-             if (authError.code === 'auth/configuration-not-found' || authError.code === 'auth/admin-restricted-operation') {
-                 console.warn("👉 ACTION REQUIRED: Go to Firebase Console > Authentication > Sign-in method > Enable 'Anonymous'.");
-             }
-             // We continue execution; maybe Firestore rules are public (allow read, write: if true;)
-           }
+        const localData = localStorage.getItem(STORAGE_KEY);
+        if (localData) {
+          const parsed = JSON.parse(localData);
+          if (parsed && parsed.hero) {
+            setContent(parsed);
+          }
         }
+      } catch (e) {
+        console.warn("Failed to parse local storage", e);
+      }
 
-        // 1. Fetch Global Config (Hero, Marquee, Fomo)
+      // Then Try Cloud Sync
+      try {
+        if (!db) throw new Error("Firestore not initialized");
+
+        // Fetch Global Config
         const configRef = doc(db, 'site_config', 'main');
         const configSnap = await getDoc(configRef);
         
-        let hero = DEFAULT_CONTENT.hero;
-        let marquee = DEFAULT_CONTENT.marquee;
-        let fomoMessages = DEFAULT_CONTENT.fomoMessages;
+        let hero = content.hero;
+        let marquee = content.marquee;
+        let fomoMessages = content.fomoMessages;
 
         if (configSnap.exists()) {
            const data = configSnap.data();
            if (data.hero) hero = data.hero;
            if (data.marquee) marquee = data.marquee;
            if (data.fomoMessages) fomoMessages = data.fomoMessages;
-        } else {
-           // Seed initial config if it doesn't exist
-           await setDoc(configRef, {
-             hero: DEFAULT_CONTENT.hero,
-             marquee: DEFAULT_CONTENT.marquee,
-             fomoMessages: DEFAULT_CONTENT.fomoMessages
-           });
         }
 
-        // 2. Fetch Products
+        // Fetch Products
         const productsRef = collection(db, 'products');
         const productsSnap = await getDocs(productsRef);
-        let products: Product[] = [];
+        let products: Product[] = content.products;
         
         if (!productsSnap.empty) {
           products = productsSnap.docs.map(doc => doc.data() as Product);
-        } else {
-           // Seed initial products
-           const batch = writeBatch(db);
-           DEFAULT_CONTENT.products.forEach(p => {
-             const ref = doc(db, 'products', p.id);
-             batch.set(ref, p);
-           });
-           await batch.commit();
-           products = DEFAULT_CONTENT.products;
         }
 
-        // 3. Fetch Archive Items
+        // Fetch Archive Items
         const archiveRef = collection(db, 'archive_items');
         const archiveSnap = await getDocs(archiveRef);
-        let archiveItems: ArchiveItem[] = [];
+        let archiveItems: ArchiveItem[] = content.archiveItems;
         
         if (!archiveSnap.empty) {
            archiveItems = archiveSnap.docs.map(doc => doc.data() as ArchiveItem);
-        } else {
-           // Seed initial archive items
-           const batch = writeBatch(db);
-           DEFAULT_CONTENT.archiveItems.forEach(i => {
-             const ref = doc(db, 'archive_items', i.id);
-             batch.set(ref, i);
-           });
-           await batch.commit();
-           archiveItems = DEFAULT_CONTENT.archiveItems;
         }
 
-        setContent({
+        const syncedContent = {
           hero,
           marquee,
           fomoMessages,
           products,
           archiveItems
-        });
+        };
+
+        setContent(syncedContent);
+        saveLocal(syncedContent);
 
       } catch (error: any) {
-        console.error("Failed to load CMS content from Firestore:", error);
         if (error.code === 'permission-denied') {
-            console.warn("⚠️ PERMISSION DENIED: Please check your Firestore Security Rules in the Firebase Console. \nTry setting them to: \nallow read, write: if request.auth != null; \nOR (for public test mode) \nallow read, write: if true;");
+            console.warn("⚠️ Firestore Permission Denied. Using Local Storage. Ensure your Firestore Rules allow reads/writes for authenticated users.");
+        } else {
+            console.error("Firestore sync error:", error);
         }
-        // Fallback to defaults on error to keep app usable
-        setContent(DEFAULT_CONTENT);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]); // Runs when 'user' state changes (Auth Complete)
+
+  // Update Wrappers: Update State -> Save Local -> Try Save Cloud
 
   const updateHero = async (hero: SiteContent['hero']) => {
-    setContent(prev => ({ ...prev, hero }));
-    if (db) {
-       await setDoc(doc(db, 'site_config', 'main'), { hero }, { merge: true });
-    }
+    setContent(prev => {
+        const next = { ...prev, hero };
+        saveLocal(next);
+        return next;
+    });
+    try { if(db) await setDoc(doc(db, 'site_config', 'main'), { hero }, { merge: true }); } catch(e) {}
   };
 
   const updateMarquee = async (marquee: string[]) => {
-    setContent(prev => ({ ...prev, marquee }));
-    if (db) {
-       await setDoc(doc(db, 'site_config', 'main'), { marquee }, { merge: true });
-    }
+    setContent(prev => {
+        const next = { ...prev, marquee };
+        saveLocal(next);
+        return next;
+    });
+    try { if(db) await setDoc(doc(db, 'site_config', 'main'), { marquee }, { merge: true }); } catch(e) {}
   };
 
   const updateFomo = async (fomoMessages: string[]) => {
-    setContent(prev => ({ ...prev, fomoMessages }));
-    if (db) {
-       await setDoc(doc(db, 'site_config', 'main'), { fomoMessages }, { merge: true });
-    }
+    setContent(prev => {
+        const next = { ...prev, fomoMessages };
+        saveLocal(next);
+        return next;
+    });
+    try { if(db) await setDoc(doc(db, 'site_config', 'main'), { fomoMessages }, { merge: true }); } catch(e) {}
   };
 
   const upsertProduct = async (product: Product) => {
@@ -187,22 +204,21 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } else {
         newProducts.push(product);
       }
-      return { ...prev, products: newProducts };
+      const next = { ...prev, products: newProducts };
+      saveLocal(next);
+      return next;
     });
 
-    if (db) {
-      await setDoc(doc(db, 'products', product.id), product);
-    }
+    try { if(db) await setDoc(doc(db, 'products', product.id), product); } catch(e) {}
   };
 
   const deleteProduct = async (id: string) => {
-    setContent(prev => ({
-      ...prev,
-      products: prev.products.filter(p => p.id !== id)
-    }));
-    if (db) {
-      await deleteDoc(doc(db, 'products', id));
-    }
+    setContent(prev => {
+        const next = { ...prev, products: prev.products.filter(p => p.id !== id) };
+        saveLocal(next);
+        return next;
+    });
+    try { if(db) await deleteDoc(doc(db, 'products', id)); } catch(e) {}
   };
 
   const upsertArchiveItem = async (item: ArchiveItem) => {
@@ -214,65 +230,58 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } else {
         newItems.push(item);
       }
-      return { ...prev, archiveItems: newItems };
+      const next = { ...prev, archiveItems: newItems };
+      saveLocal(next);
+      return next;
     });
 
-    if (db) {
-      await setDoc(doc(db, 'archive_items', item.id), item);
-    }
+    try { if(db) await setDoc(doc(db, 'archive_items', item.id), item); } catch(e) {}
   };
 
   const deleteArchiveItem = async (id: string) => {
-    setContent(prev => ({
-      ...prev,
-      archiveItems: prev.archiveItems.filter(i => i.id !== id)
-    }));
-    if (db) {
-      await deleteDoc(doc(db, 'archive_items', id));
-    }
+    setContent(prev => {
+        const next = { ...prev, archiveItems: prev.archiveItems.filter(i => i.id !== id) };
+        saveLocal(next);
+        return next;
+    });
+    try { if(db) await deleteDoc(doc(db, 'archive_items', id)); } catch(e) {}
   };
 
   const resetToDefaults = async () => {
-    if (!confirm("Reset all site content to defaults? This will WIPE database changes and restore original content.")) return;
+    if (!confirm("Reset all content to defaults?")) return;
     
     setIsLoading(true);
+    // 1. Reset Local
+    setContent(DEFAULT_CONTENT);
+    saveLocal(DEFAULT_CONTENT);
+
+    // 2. Try Reset Cloud
     try {
-        // Optimistic update
-        setContent(DEFAULT_CONTENT);
-
         if (!db) return;
-
-        // 1. Reset Global Config
+        
         await setDoc(doc(db, 'site_config', 'main'), {
              hero: DEFAULT_CONTENT.hero,
              marquee: DEFAULT_CONTENT.marquee,
              fomoMessages: DEFAULT_CONTENT.fomoMessages
         });
 
-        // 2. Reset Products (Delete all existing, then re-seed)
         const productsSnap = await getDocs(collection(db, 'products'));
-        const pBatch = writeBatch(db);
-        productsSnap.docs.forEach((d) => pBatch.delete(d.ref));
-        DEFAULT_CONTENT.products.forEach(p => {
-            const ref = doc(db, 'products', p.id);
-            pBatch.set(ref, p);
-        });
-        await pBatch.commit();
+        if (!productsSnap.empty) {
+            const pBatch = writeBatch(db);
+            productsSnap.docs.forEach((d) => pBatch.delete(d.ref));
+            DEFAULT_CONTENT.products.forEach(p => pBatch.set(doc(db, 'products', p.id), p));
+            await pBatch.commit();
+        }
 
-        // 3. Reset Archive (Delete all existing, then re-seed)
         const archiveSnap = await getDocs(collection(db, 'archive_items'));
-        const aBatch = writeBatch(db);
-        archiveSnap.docs.forEach((d) => aBatch.delete(d.ref));
-        DEFAULT_CONTENT.archiveItems.forEach(i => {
-             const ref = doc(db, 'archive_items', i.id);
-             aBatch.set(ref, i);
-        });
-        await aBatch.commit();
-
-        console.log("Database reset complete.");
+        if (!archiveSnap.empty) {
+            const aBatch = writeBatch(db);
+            archiveSnap.docs.forEach((d) => aBatch.delete(d.ref));
+            DEFAULT_CONTENT.archiveItems.forEach(i => aBatch.set(doc(db, 'archive_items', i.id), i));
+            await aBatch.commit();
+        }
     } catch (e: any) {
-        console.error("Reset failed", e);
-        alert("Reset failed: " + e.message);
+        console.warn("Cloud reset incomplete (permissions or network). Local reset successful.");
     } finally {
         setIsLoading(false);
     }
