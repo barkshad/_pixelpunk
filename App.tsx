@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import Header from './components/Header';
@@ -13,7 +12,6 @@ import CartSidebar from './components/CartSidebar';
 import LoginModal from './components/LoginModal';
 import ProductModal from './components/ProductModal';
 import PolicyModal from './components/PolicyModal';
-import AdminPanel from './components/AdminPanel';
 import { Product } from './types';
 import { POLICY_CONTENT } from './constants';
 import { CMSProvider, useCMS } from './context/CMSContext';
@@ -46,7 +44,6 @@ const AppContent: React.FC = () => {
     setCart(prev => prev.filter(item => item.id !== id));
   }, []);
 
-  // Psychological Trigger: Random FOMO notifications
   useEffect(() => {
     const trigger = () => {
       if (content.fomoMessages.length > 0) {
@@ -114,7 +111,6 @@ const AppContent: React.FC = () => {
       <main className="relative z-10">
         <Hero />
         
-        {/* News Marquee - Psychologically Persuasive */}
         <div className="py-4 bg-zinc-900 border-y border-white/5 overflow-hidden whitespace-nowrap shadow-inner">
           <div className="inline-block animate-[marquee_50s_linear_infinite]">
             {[1, 2, 3].map(i => (
@@ -146,9 +142,6 @@ const AppContent: React.FC = () => {
       
       <Footer onOpenPolicy={(title, id) => setActivePolicy({ title, id })} />
 
-      <AdminPanel />
-
-      {/* FOMO Notification */}
       <AnimatePresence>
         {fomoNotice && (
           <motion.div 
@@ -184,7 +177,7 @@ const AppContent: React.FC = () => {
         {activePolicy && (
           <PolicyModal 
             title={activePolicy.title}
-            content={POLICY_CONTENT[activePolicy.id] as React.ReactNode}
+            content={POLICY_CONTENT[activePolicy.id]}
             onClose={() => setActivePolicy(null)}
           />
         )}

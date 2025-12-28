@@ -1,9 +1,6 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { onSnapshot, setDoc, updateDoc, deleteDoc, doc, collection } from 'firebase/firestore';
+import React, { createContext, useContext, useState } from 'react';
 import { SiteContent, Product, ArchiveItem } from '../types';
 import { PRODUCTS, ARCHIVE_ITEMS } from '../constants';
-import { db, siteContentDoc, productsCol, archiveCol } from '../services/firebase';
 
 interface CMSContextType {
   content: SiteContent;
@@ -43,85 +40,18 @@ const DEFAULT_CONTENT: SiteContent = {
 const CMSContext = createContext<CMSContextType | undefined>(undefined);
 
 export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
-  const [isLoading, setIsLoading] = useState(true);
+  const [content] = useState<SiteContent>(DEFAULT_CONTENT);
+  const [isLoading] = useState(false);
 
-  // Sync with Firestore in Real-time
-  useEffect(() => {
-    // Listen to main site content (hero, marquee, fomo)
-    const unsubMain = onSnapshot(siteContentDoc, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.data() as Partial<SiteContent>;
-        setContent(prev => ({ ...prev, ...data }));
-      }
-      setIsLoading(false);
-    });
-
-    // Listen to products
-    const unsubProducts = onSnapshot(productsCol, (snapshot) => {
-      const prods = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) as Product[];
-      if (prods.length > 0) {
-        setContent(prev => ({ ...prev, products: prods }));
-      }
-    });
-
-    // Listen to archive items
-    const unsubArchive = onSnapshot(archiveCol, (snapshot) => {
-      const items = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })) as ArchiveItem[];
-      if (items.length > 0) {
-        setContent(prev => ({ ...prev, archiveItems: items }));
-      }
-    });
-
-    return () => {
-      unsubMain();
-      unsubProducts();
-      unsubArchive();
-    };
-  }, []);
-
-  const updateHero = async (hero: SiteContent['hero']) => {
-    await setDoc(siteContentDoc, { hero }, { merge: true });
-  };
-
-  const updateMarquee = async (marquee: string[]) => {
-    await setDoc(siteContentDoc, { marquee }, { merge: true });
-  };
-
-  const updateFomo = async (fomoMessages: string[]) => {
-    await setDoc(siteContentDoc, { fomoMessages }, { merge: true });
-  };
-
-  const upsertProduct = async (product: Product) => {
-    const productDoc = doc(db, 'products', product.id);
-    await setDoc(productDoc, product);
-  };
-
-  const deleteProduct = async (id: string) => {
-    const productDoc = doc(db, 'products', id);
-    await deleteDoc(productDoc);
-  };
-
-  const upsertArchiveItem = async (item: ArchiveItem) => {
-    const itemDoc = doc(db, 'archive_items', item.id);
-    await setDoc(itemDoc, item);
-  };
-
-  const deleteArchiveItem = async (id: string) => {
-    const itemDoc = doc(db, 'archive_items', id);
-    await deleteDoc(itemDoc);
-  };
-
-  const resetToDefaults = async () => {
-    if (confirm("Reset all site content to defaults? This will overwrite the database.")) {
-      await setDoc(siteContentDoc, {
-        hero: DEFAULT_CONTENT.hero,
-        marquee: DEFAULT_CONTENT.marquee,
-        fomoMessages: DEFAULT_CONTENT.fomoMessages
-      });
-      // Note: Full reset of collections (products/archive) would require batch deletes
-    }
-  };
+  // Pure static stubs
+  const updateHero = async () => {};
+  const updateMarquee = async () => {};
+  const updateFomo = async () => {};
+  const upsertProduct = async () => {};
+  const deleteProduct = async () => {};
+  const upsertArchiveItem = async () => {};
+  const deleteArchiveItem = async () => {};
+  const resetToDefaults = async () => {};
 
   return (
     <CMSContext.Provider value={{ 
