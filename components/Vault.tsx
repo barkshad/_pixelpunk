@@ -17,34 +17,27 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart }) => {
     : PRODUCTS.filter(p => p.category === activeCategory);
 
   return (
-    <section id="vault" className="py-24 sm:py-32 bg-darker overflow-hidden">
+    <section id="vault" className="py-24 sm:py-32 bg-darker">
       <div className="container mx-auto px-6">
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-end mb-16 gap-10">
-          <div className="max-w-3xl space-y-6">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="flex items-center gap-3 text-primary"
-            >
-              <span className="w-12 h-px bg-primary/30"></span>
-              <span className="text-xs font-bold uppercase tracking-widest">Our Collection</span>
-            </motion.div>
-            <h2 className="text-5xl md:text-7xl font-extrabold tracking-tight">The Shop</h2>
-            <p className="text-slate-400 text-lg md:text-xl font-medium leading-relaxed max-w-xl">
-              Authentic vintage gems. Every piece is cleaned, checked for quality, and ready for a new home.
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-24 gap-12">
+          <div className="max-w-2xl space-y-4">
+            <span className="text-primary font-serif italic text-lg block">Curated Selection</span>
+            <h2 className="text-5xl md:text-7xl font-serif font-medium tracking-tight">The Latest Finds</h2>
+            <p className="text-zinc-500 text-lg md:text-xl font-medium leading-relaxed">
+              Every item is a singular piece of history, verified for authenticity and quality. 
+              Once it's gone, it's gone.
             </p>
           </div>
           
-          <div className="flex flex-wrap gap-2 p-2 rounded-3xl bg-slate-900/40 border border-white/5 backdrop-blur-md self-start">
+          <div className="flex flex-wrap gap-2 p-1.5 rounded-full bg-zinc-900 border border-white/5">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all ${
+                className={`px-8 py-3 rounded-full text-sm font-bold transition-all ${
                   activeCategory === cat 
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-zinc-800 text-white shadow-lg' 
+                    : 'text-zinc-500 hover:text-zinc-300'
                 }`}
               >
                 {cat}
@@ -55,76 +48,78 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart }) => {
 
         <motion.div 
           layout
-          className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-14"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16"
         >
           <AnimatePresence mode="popLayout">
             {filteredProducts.map((product) => (
               <motion.div
                 key={product.id}
                 layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="glass-card rounded-[3rem] overflow-hidden group shadow-2xl transition-all duration-500"
+                className="vintage-card rounded-[2rem] overflow-hidden group transition-all duration-500 border border-white/5 hover:border-primary/20"
               >
-                <div className="flex flex-col md:flex-row h-full min-h-[450px]">
+                <div className="flex flex-col sm:flex-row h-full">
                   {/* Image Section */}
-                  <div className="relative w-full md:w-[45%] aspect-[4/5] md:aspect-auto overflow-hidden">
+                  <div className="relative w-full sm:w-[45%] aspect-[4/5] sm:aspect-auto overflow-hidden">
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110"
+                      className="w-full h-full object-cover grayscale-[0.2] transition-transform duration-[2s] group-hover:scale-105 group-hover:grayscale-0"
                     />
                     <div className="absolute top-6 left-6">
-                      <div className="bg-darker/70 backdrop-blur-xl px-4 py-2 rounded-2xl border border-white/10">
-                        <span className="text-[10px] font-bold text-white uppercase tracking-widest">ID: {product.id}</span>
+                      <div className="bg-zinc-950/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-lg">
+                        <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest font-mono">CODE_{product.id}</span>
                       </div>
                     </div>
                     {product.status === ItemStatus.SOLD && (
-                      <div className="absolute inset-0 bg-darker/60 backdrop-blur-md flex items-center justify-center p-10 text-center">
-                        <div className="border-4 border-white/10 p-10 rounded-full rotate-[-12deg] flex flex-col items-center">
-                          <span className="text-2xl font-black text-white uppercase tracking-tight mb-1">Found a Home</span>
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sold Out</span>
+                      <div className="absolute inset-0 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center p-8 text-center">
+                        <div className="border border-white/20 px-8 py-6 rounded-lg rotate-[-10deg]">
+                          <span className="text-2xl font-serif italic text-white tracking-wide">Archived</span>
                         </div>
                       </div>
                     )}
                   </div>
 
                   {/* Content Section */}
-                  <div className="flex-1 p-8 md:p-12 flex flex-col justify-between bg-gradient-to-br from-slate-800/20 to-transparent">
+                  <div className="flex-1 p-10 flex flex-col justify-between">
                     <div className="space-y-8">
-                      <div className="space-y-3">
-                        <span className="text-accent text-xs font-bold uppercase tracking-widest">{product.category}</span>
-                        <h3 className="text-2xl md:text-3xl font-bold leading-tight group-hover:text-primary transition-colors">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-start">
+                          <span className="text-accent text-[11px] font-bold uppercase tracking-widest">{product.category}</span>
+                          <span className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest font-mono">{product.era}</span>
+                        </div>
+                        <h3 className="text-3xl font-serif font-medium leading-tight text-zinc-100 group-hover:text-primary transition-colors">
                           {product.name}
                         </h3>
-                        <div className="text-2xl font-extrabold text-slate-100">{product.price}</div>
+                        <div className="text-2xl font-serif text-zinc-400 italic">{product.price}</div>
                       </div>
 
-                      <div className="p-5 rounded-2xl bg-darker/40 border border-white/5 italic text-slate-400 text-sm leading-relaxed border-l-4 border-l-primary">
-                        "{product.provenance}"
-                      </div>
+                      <p className="text-zinc-500 text-sm font-medium leading-relaxed italic">
+                        {product.provenance}
+                      </p>
 
                       <div className="flex flex-wrap gap-2">
                         {product.details.map((detail, idx) => (
-                          <div key={idx} className="px-3 py-1.5 rounded-xl bg-slate-900/50 border border-white/5 text-[10px] text-slate-300 font-bold uppercase tracking-wide">
+                          <div key={idx} className="px-3 py-1.5 rounded-md bg-zinc-900/50 border border-white/5 text-[10px] text-zinc-400 font-bold uppercase tracking-wide">
                             {detail}
                           </div>
                         ))}
                       </div>
                     </div>
 
-                    <div className="mt-10">
+                    <div className="mt-12">
                       <button 
                         onClick={() => product.status === ItemStatus.AVAILABLE && onAddToCart(product)}
                         disabled={product.status === ItemStatus.SOLD}
-                        className={`w-full py-5 rounded-2xl font-bold text-base transition-all shadow-xl active:scale-95 ${
+                        className={`w-full py-5 rounded-full font-bold text-sm tracking-widest uppercase transition-all shadow-xl active:scale-95 ${
                           product.status === ItemStatus.AVAILABLE 
-                            ? 'btn-primary text-white' 
-                            : 'bg-slate-700 text-slate-500 cursor-not-allowed opacity-50'
+                            ? 'btn-vintage' 
+                            : 'bg-zinc-800 text-zinc-600 cursor-not-allowed'
                         }`}
                       >
-                        {product.status === ItemStatus.AVAILABLE ? 'Add to Bag' : 'Sold Out'}
+                        {product.status === ItemStatus.AVAILABLE ? 'Claim Item' : 'Sold Out'}
                       </button>
                     </div>
                   </div>

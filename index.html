@@ -4,38 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>_pixelpunk | Curated Archive Apparel</title>
+    <title>pixelpunk | Curated Vintage Archives</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
           extend: {
             colors: {
-              primary: '#6366F1', // Indigo 500
-              secondary: '#0EA5E9', // Sky 500
-              accent: '#22D3EE', // Cyan 400
-              success: '#10B981', // Emerald 500
-              dark: '#0F172A', // Slate 900
-              darker: '#020617', // Slate 950
-              card: '#1E293B', // Slate 800
-              border: 'rgba(255, 255, 255, 0.1)',
+              primary: '#818CF8', // Softened Indigo
+              secondary: '#38BDF8', // Softened Sky
+              accent: '#F59E0B', // Warm Amber/Gold
+              success: '#10B981', 
+              dark: '#18181B', // Zinc 900
+              darker: '#09090B', // Zinc 950
+              paper: '#FAF9F6', // Off-white/Parchment
+              card: '#1E1E21',
+              border: 'rgba(255, 255, 255, 0.08)',
             },
             fontFamily: {
               sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-              display: ['"Plus Jakarta Sans"', 'sans-serif'],
+              serif: ['"EB Garamond"', 'serif'],
+              display: ['"EB Garamond"', 'serif'],
               mono: ['"JetBrains Mono"', 'monospace'],
             },
             animation: {
               'pulse-slow': 'pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'float': 'float 6s ease-in-out infinite',
+              'float': 'float 8s ease-in-out infinite',
             },
             keyframes: {
               float: {
                 '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-12px)' },
+                '50%': { transform: 'translateY(-10px)' },
               }
             }
           }
@@ -46,65 +48,82 @@
       body {
         margin: 0;
         padding: 0;
-        background-color: #020617;
-        color: #F8FAFC;
+        background-color: #09090B;
+        color: #F4F4F5;
         font-family: 'Plus Jakarta Sans', sans-serif;
         overflow-x: hidden;
         -webkit-font-smoothing: antialiased;
       }
-      .glass-card {
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+      .vintage-card {
+        background: rgba(24, 24, 27, 0.8);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
       }
-      .btn-primary {
-        background: linear-gradient(135deg, #6366F1 0%, #0EA5E9 100%);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      .btn-vintage {
+        background: #F4F4F5;
+        color: #09090B;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        font-weight: 700;
+        letter-spacing: 0.05em;
       }
-      .btn-primary:hover {
-        transform: translateY(-2px) scale(1.02);
-        box-shadow: 0 12px 24px -8px rgba(99, 102, 241, 0.5);
+      .btn-vintage:hover {
+        background: #818CF8;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px -5px rgba(129, 140, 248, 0.4);
       }
-      .btn-primary:active {
-        transform: translateY(0) scale(0.98);
+      .btn-vintage:active {
+        transform: translateY(0);
+      }
+      .paper-texture {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 999;
+        opacity: 0.03;
+        background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
       }
       ::-webkit-scrollbar {
-        width: 10px;
+        width: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #020617;
+        background: #09090B;
       }
       ::-webkit-scrollbar-thumb {
-        background: #334155;
-        border-radius: 10px;
-        border: 2px solid #020617;
+        background: #27272A;
+        border-radius: 4px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #6366F1;
+        background: #818CF8;
       }
-      .text-balance {
-        text-wrap: balance;
+      .serif-italic {
+        font-family: 'EB Garamond', serif;
+        font-style: italic;
       }
-      .shadow-soft {
-        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      h1, h2, h3 {
+        font-family: 'EB Garamond', serif;
       }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@^18.2.0",
-    "react-dom": "https://esm.sh/react-dom@^18.2.0",
-    "react-dom/": "https://esm.sh/react-dom@^18.2.0/",
-    "react/": "https://esm.sh/react@^18.2.0/",
-    "framer-motion": "https://esm.sh/framer-motion@^10.12.16",
-    "vite": "https://esm.sh/vite@^4.3.0",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^4.0.0"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
   }
 }
 </script>
 </head>
-<body class="selection:bg-primary/30 selection:text-white">
+<body>
+    <div class="paper-texture"></div>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

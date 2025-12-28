@@ -50,18 +50,33 @@ const App: React.FC = () => {
       
       if (href && href.startsWith('#')) {
         e.preventDefault();
-        const element = document.querySelector(href);
-        if (element) {
-          const offset = 80;
-          const bodyRect = document.body.getBoundingClientRect().top;
-          const elementRect = element.getBoundingClientRect().top;
-          const elementPosition = elementRect - bodyRect;
-          const offsetPosition = elementPosition - offset;
 
+        // Fix: document.querySelector('#') is not a valid CSS selector and throws SyntaxError.
+        // If the href is just '#', it typically means "scroll to top".
+        if (href === '#') {
           window.scrollTo({
-            top: offsetPosition,
+            top: 0,
             behavior: 'smooth'
           });
+          return;
+        }
+
+        try {
+          const element = document.querySelector(href);
+          if (element) {
+            const offset = 80; // Accounting for the fixed header
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = element.getBoundingClientRect().top;
+            const elementPosition = elementRect - bodyRect;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        } catch (error) {
+          console.warn(`Could not navigate to selector: ${href}`, error);
         }
       }
     };
@@ -80,25 +95,12 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-darker text-white selection:bg-primary/30 selection:text-white overflow-x-hidden font-sans">
-      {/* Background Decor */}
+    <div className="min-h-screen bg-darker text-zinc-100 selection:bg-primary/30 selection:text-white overflow-x-hidden font-sans">
       <motion.div 
-        className="hidden lg:block fixed top-0 left-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none z-[1]"
-        animate={{
-          x: mousePos.x - 400,
-          y: mousePos.y - 400,
-        }}
-        transition={{ type: "spring", damping: 60, stiffness: 120 }}
-      />
-
-      <motion.div 
-        className="fixed top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary to-accent z-[200] origin-left shadow-lg"
+        className="fixed top-0 left-0 right-0 h-1 bg-primary z-[200] origin-left"
         style={{ scaleX }}
       />
 
-      {/* Overlays */}
-      <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.02] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-      
       <Header 
         cartCount={cart.length} 
         onCartOpen={() => setIsCartOpen(true)} 
@@ -108,22 +110,22 @@ const App: React.FC = () => {
       <main className="relative z-10">
         <Hero />
         
-        {/* News Marquee */}
-        <div className="py-6 bg-gradient-to-r from-primary/90 to-secondary/90 backdrop-blur-md overflow-hidden whitespace-nowrap shadow-2xl border-y border-white/10">
-          <div className="inline-block animate-[marquee_45s_linear_infinite]">
+        {/* News Marquee - More Curated and Warm */}
+        <div className="py-4 bg-zinc-900 border-y border-white/5 overflow-hidden whitespace-nowrap shadow-inner">
+          <div className="inline-block animate-[marquee_50s_linear_infinite]">
             {[1, 2, 3].map(i => (
               <React.Fragment key={i}>
-                <span className="font-bold text-xs sm:text-sm tracking-[0.2em] mx-12 text-white uppercase flex items-center gap-4">
-                  <span className="w-2.5 h-2.5 bg-accent rounded-full animate-pulse shadow-[0_0_10px_rgba(34,211,238,0.8)]"></span>
-                  PROTOCOL V2.4: 12 NEW PIECES AUTHENTICATED
+                <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
+                  <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
+                  New Items Added This Morning
                 </span>
-                <span className="font-bold text-xs sm:text-sm tracking-[0.2em] mx-12 text-white uppercase flex items-center gap-4">
-                  <span className="w-2.5 h-2.5 bg-white rounded-full"></span>
-                  GLOBAL SHIPMENTS TRACKED SECURELY
+                <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                  Safe Delivery to Your Doorstep
                 </span>
-                <span className="font-bold text-xs sm:text-sm tracking-[0.2em] mx-12 text-white uppercase flex items-center gap-4">
-                  <span className="w-2.5 h-2.5 bg-accent rounded-full animate-pulse"></span>
-                  EXCLUSIVE SOURCING: TOKYO NIGHT ARCHIVE DROP
+                <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
+                  <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
+                  Check our Guide on Vintage Clothing Care
                 </span>
               </React.Fragment>
             ))}
@@ -143,7 +145,6 @@ const App: React.FC = () => {
       
       <Footer />
 
-      {/* Modal Systems */}
       <AnimatePresence>
         {isCartOpen && (
           <CartSidebar 
