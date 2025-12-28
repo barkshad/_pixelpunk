@@ -12,14 +12,17 @@ import Testimonials from './components/Testimonials';
 import CartSidebar from './components/CartSidebar';
 import LoginModal from './components/LoginModal';
 import ProductModal from './components/ProductModal';
+import PolicyModal from './components/PolicyModal';
 import { Product } from './types';
+import { POLICY_CONTENT } from './constants';
 
 const App: React.FC = () => {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [activePolicy, setActivePolicy] = useState<{ title: string; id: string } | null>(null);
   const [cart, setCart] = useState<Product[]>([]);
+  const [fomoNotice, setFomoNotice] = useState<string | null>(null);
   
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -40,12 +43,26 @@ const App: React.FC = () => {
     setCart(prev => prev.filter(item => item.id !== id));
   }, []);
 
+  // Psychological Trigger: Random FOMO notifications
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
+    const messages = [
+      "A collector in Paris just viewed the Hybrid Blazer.",
+      "Only 1 Archive Tee left in current stock.",
+      "A styling request was just fulfilled for a client in Tokyo.",
+      "New curated drops arriving this Friday.",
+      "Verified: 98.4% of archive items never return after sale."
+    ];
     
+    const trigger = () => {
+      setFomoNotice(messages[Math.floor(Math.random() * messages.length)]);
+      setTimeout(() => setFomoNotice(null), 5000);
+    };
+
+    const timer = setInterval(trigger, 15000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
       const target = e.currentTarget as HTMLAnchorElement;
       const href = target.getAttribute('href');
@@ -67,7 +84,8 @@ const App: React.FC = () => {
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
           }
         } catch (error) {
-          console.warn(`Could not navigate to selector: ${href}`, error);
+          // If selector fails, it might be an internal route we want to handle via state
+          console.warn(`Anchor navigation failed for ${href}`);
         }
       }
     };
@@ -78,7 +96,6 @@ const App: React.FC = () => {
     });
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
       anchors.forEach(anchor => {
         anchor.removeEventListener('click', handleAnchorClick as EventListener);
       });
@@ -101,22 +118,22 @@ const App: React.FC = () => {
       <main className="relative z-10">
         <Hero />
         
-        {/* News Marquee - Welcoming and Convincing */}
+        {/* News Marquee - Psychologically Persuasive */}
         <div className="py-4 bg-zinc-900 border-y border-white/5 overflow-hidden whitespace-nowrap shadow-inner">
           <div className="inline-block animate-[marquee_50s_linear_infinite]">
             {[1, 2, 3].map(i => (
               <React.Fragment key={i}>
                 <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
-                  <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                  Sustainable Fashion: Why buying old is better for the planet
+                  <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
+                  LIMITED: Each item is a singular record of history.
                 </span>
                 <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
                   <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                  Safe Shipping: We deliver happiness, anywhere in the world
+                  JOIN THE ARCHIVE: Ownership grants access to private drops.
                 </span>
                 <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
-                  <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                  Verified Authenticity: Every piece is double-checked by our team
+                  <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
+                  URGENCY: Sold items are removed permanently from the public log.
                 </span>
               </React.Fragment>
             ))}
@@ -137,7 +154,22 @@ const App: React.FC = () => {
         <Sourcing />
       </main>
       
-      <Footer />
+      <Footer onOpenPolicy={(title, id) => setActivePolicy({ title, id })} />
+
+      {/* FOMO Notification */}
+      <AnimatePresence>
+        {fomoNotice && (
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -50 }}
+            className="fixed bottom-10 left-10 z-[2000] vintage-card px-6 py-4 rounded-2xl flex items-center gap-4 border-l-4 border-l-primary"
+          >
+            <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+            <p className="text-xs font-bold text-zinc-300 uppercase tracking-widest">{fomoNotice}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {isCartOpen && (
@@ -148,15 +180,21 @@ const App: React.FC = () => {
           />
         )}
         {isLoginOpen && (
-          <LoginModal 
-            onClose={() => setIsLoginOpen(false)} 
-          />
+          <LoginModal onClose={() => setIsLoginOpen(false)} />
         )}
         {selectedProduct && (
           <ProductModal 
             product={selectedProduct} 
             onClose={() => setSelectedProduct(null)}
             onAddToCart={addToCart}
+          />
+        )}
+        {activePolicy && (
+          <PolicyModal 
+            title={activePolicy.title}
+            // Explicitly casting indexing result to ReactNode to satisfy strict TS checks on dynamic lookups
+            content={POLICY_CONTENT[activePolicy.id] as React.ReactNode}
+            onClose={() => setActivePolicy(null)}
           />
         )}
       </AnimatePresence>

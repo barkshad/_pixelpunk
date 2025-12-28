@@ -72,6 +72,16 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart, onViewProduct }) => {
                       alt={product.name}
                       className="w-full h-full object-cover grayscale-[0.2] transition-transform duration-[2s] group-hover:scale-105 group-hover:grayscale-0"
                     />
+                    
+                    {/* Urgency Badge Overlay */}
+                    {product.status === ItemStatus.AVAILABLE && (
+                      <div className="absolute top-6 right-6">
+                        <div className="bg-red-500/90 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl animate-pulse">
+                          1 Unit Remaining
+                        </div>
+                      </div>
+                    )}
+
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <span className="bg-white/90 backdrop-blur-md text-zinc-900 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest shadow-xl">
                         View Story
@@ -97,6 +107,7 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart, onViewProduct }) => {
                       <div className="space-y-2">
                         <div className="flex justify-between items-start">
                           <span className="text-accent text-[11px] font-bold uppercase tracking-widest">{product.category}</span>
+                          <span className="text-zinc-500 text-[10px] font-bold">12 Active Views</span>
                         </div>
                         <h3 
                           className="text-3xl font-serif font-medium leading-tight text-zinc-100 group-hover:text-primary transition-colors cursor-pointer"
