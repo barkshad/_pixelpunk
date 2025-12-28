@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    /**
+     * PixelPunk Archive Pro - Security Rules
+     *
+     * This ruleset enables the core functionality of the application:
+     *
+     * 1. Public Read Access: `allow read: if true;`
+     *    - Allows any visitor to view the products, archive items, and site configuration.
+     *    - This is essential for the landing page and public-facing content to load for everyone.
+     *
+     * 2. Authenticated Write Access: `allow write: if request.auth != null;`
+     *    - Restricts creating, updating, or deleting documents to authenticated users.
+     *    - The application uses Firebase's anonymous authentication (`signInAnonymously`)
+     *      to create a temporary user session for every visitor. This allows the
+     *      Admin Panel and media logging services to function correctly without errors.
+     */
+    match /{document=**} {
+      // Allows anyone to view the archive content.
+      allow read: if true;
+
+      // Allows the app to save CMS changes and log media uploads once a
+      // user (even an anonymous one) is authenticated.
+      allow write: if request.auth != null;
+    }
+  }
+}
