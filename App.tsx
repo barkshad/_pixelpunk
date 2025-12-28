@@ -13,10 +13,13 @@ import CartSidebar from './components/CartSidebar';
 import LoginModal from './components/LoginModal';
 import ProductModal from './components/ProductModal';
 import PolicyModal from './components/PolicyModal';
+import AdminPanel from './components/AdminPanel';
 import { Product } from './types';
 import { POLICY_CONTENT } from './constants';
+import { CMSProvider, useCMS } from './context/CMSContext';
 
-const App: React.FC = () => {
+const AppContent: React.FC = () => {
+  const { content } = useCMS();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -45,22 +48,16 @@ const App: React.FC = () => {
 
   // Psychological Trigger: Random FOMO notifications
   useEffect(() => {
-    const messages = [
-      "A collector in Paris just viewed the Hybrid Blazer.",
-      "Only 1 Archive Tee left in current stock.",
-      "A styling request was just fulfilled for a client in Tokyo.",
-      "New curated drops arriving this Friday.",
-      "Verified: 98.4% of archive items never return after sale."
-    ];
-    
     const trigger = () => {
-      setFomoNotice(messages[Math.floor(Math.random() * messages.length)]);
-      setTimeout(() => setFomoNotice(null), 5000);
+      if (content.fomoMessages.length > 0) {
+        setFomoNotice(content.fomoMessages[Math.floor(Math.random() * content.fomoMessages.length)]);
+        setTimeout(() => setFomoNotice(null), 5000);
+      }
     };
 
-    const timer = setInterval(trigger, 15000);
+    const timer = setInterval(trigger, 18000);
     return () => clearInterval(timer);
-  }, []);
+  }, [content.fomoMessages]);
 
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
@@ -84,7 +81,6 @@ const App: React.FC = () => {
             window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
           }
         } catch (error) {
-          // If selector fails, it might be an internal route we want to handle via state
           console.warn(`Anchor navigation failed for ${href}`);
         }
       }
@@ -123,18 +119,12 @@ const App: React.FC = () => {
           <div className="inline-block animate-[marquee_50s_linear_infinite]">
             {[1, 2, 3].map(i => (
               <React.Fragment key={i}>
-                <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
-                  <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
-                  LIMITED: Each item is a singular record of history.
-                </span>
-                <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
-                  <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                  JOIN THE ARCHIVE: Ownership grants access to private drops.
-                </span>
-                <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
-                  <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
-                  URGENCY: Sold items are removed permanently from the public log.
-                </span>
+                {content.marquee.map((msg, idx) => (
+                  <span key={idx} className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
+                    <span className="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
+                    {msg}
+                  </span>
+                ))}
               </React.Fragment>
             ))}
           </div>
@@ -155,6 +145,8 @@ const App: React.FC = () => {
       </main>
       
       <Footer onOpenPolicy={(title, id) => setActivePolicy({ title, id })} />
+
+      <AdminPanel />
 
       {/* FOMO Notification */}
       <AnimatePresence>
@@ -192,7 +184,6 @@ const App: React.FC = () => {
         {activePolicy && (
           <PolicyModal 
             title={activePolicy.title}
-            // Explicitly casting indexing result to ReactNode to satisfy strict TS checks on dynamic lookups
             content={POLICY_CONTENT[activePolicy.id] as React.ReactNode}
             onClose={() => setActivePolicy(null)}
           />
@@ -210,5 +201,11 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+const App: React.FC = () => (
+  <CMSProvider>
+    <AppContent />
+  </CMSProvider>
+);
 
 export default App;

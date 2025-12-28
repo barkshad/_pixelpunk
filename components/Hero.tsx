@@ -1,8 +1,11 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useCMS } from '../context/CMSContext';
 
 const Hero: React.FC = () => {
+  const { content } = useCMS();
+
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center pt-32 pb-20 overflow-hidden bg-darker">
       {/* Subtle Grainy Background effect */}
@@ -15,7 +18,7 @@ const Hero: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <span className="font-serif italic text-lg text-accent tracking-wide">CURATING THE FUTURE ARCHIVE</span>
+            <span className="font-serif italic text-lg text-accent tracking-wide">{content.hero.slogan}</span>
           </motion.div>
 
           <motion.h1 
@@ -24,8 +27,8 @@ const Hero: React.FC = () => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="text-7xl md:text-9xl font-serif font-medium tracking-tight leading-[0.85] mb-12 text-zinc-50"
           >
-            Rare Archives. <br />
-            <span className="italic font-normal serif-italic text-zinc-400">Modern Fits.</span>
+            {content.hero.title.split('.')[0]}. <br />
+            <span className="italic font-normal serif-italic text-zinc-400">{content.hero.title.split('.')[1] || "Modern Fits."}</span>
           </motion.h1>
 
           <motion.p
@@ -34,7 +37,7 @@ const Hero: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="max-w-2xl mx-auto text-lg md:text-xl text-zinc-400 mb-16 font-medium leading-relaxed"
           >
-            Stop wearing the same things as everyone else. We find unique, high-quality pieces from the past that look incredible in your closet today.
+            {content.hero.subtitle}
           </motion.p>
 
           <motion.div 

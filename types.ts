@@ -25,3 +25,15 @@ export interface ArchiveItem {
   date: string;
   tags: string[];
 }
+
+export interface SiteContent {
+  hero: {
+    slogan: string;
+    title: string;
+    subtitle: string;
+  };
+  marquee: string[];
+  fomoMessages: string[];
+  products: Product[];
+  archiveItems: ArchiveItem[];
+}

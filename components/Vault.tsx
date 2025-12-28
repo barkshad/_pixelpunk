@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PRODUCTS } from '../constants';
+import { useCMS } from '../context/CMSContext';
 import { ItemStatus, Product } from '../types';
 
 interface VaultProps {
@@ -10,12 +10,13 @@ interface VaultProps {
 }
 
 const Vault: React.FC<VaultProps> = ({ onAddToCart, onViewProduct }) => {
+  const { content } = useCMS();
   const [activeCategory, setActiveCategory] = useState('All');
   
   const categories = ['All', 'Outerwear', 'Vests', 'Tops', 'Bottoms'];
   const filteredProducts = activeCategory === 'All' 
-    ? PRODUCTS 
-    : PRODUCTS.filter(p => p.category === activeCategory);
+    ? content.products 
+    : content.products.filter(p => p.category === activeCategory);
 
   return (
     <section id="vault" className="py-24 sm:py-32 bg-darker">
@@ -107,7 +108,7 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart, onViewProduct }) => {
                       <div className="space-y-2">
                         <div className="flex justify-between items-start">
                           <span className="text-accent text-[11px] font-bold uppercase tracking-widest">{product.category}</span>
-                          <span className="text-zinc-500 text-[10px] font-bold">12 Active Views</span>
+                          <span className="text-zinc-500 text-[10px] font-bold">{Math.floor(Math.random() * 20) + 5} Active Views</span>
                         </div>
                         <h3 
                           className="text-3xl font-serif font-medium leading-tight text-zinc-100 group-hover:text-primary transition-colors cursor-pointer"
