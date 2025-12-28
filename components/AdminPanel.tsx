@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCMS } from '../context/CMSContext';
@@ -99,7 +98,7 @@ const AdminPanel: React.FC = () => {
         <div className="absolute inset-0 z-[8000] bg-darker/60 backdrop-blur-sm flex flex-col items-center justify-center gap-4">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
           <p className="text-xs font-bold uppercase tracking-widest text-primary">
-            {isUploading ? "Uploading to Cloudinary CDN..." : "Syncing with Firestore Archive..."}
+            {isUploading ? "Uploading to Cloudinary CDN..." : "Updating Local State..."}
           </p>
         </div>
       )}
@@ -134,7 +133,7 @@ const AdminPanel: React.FC = () => {
           </button>
           <div className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest text-center flex items-center justify-center gap-2">
             <span className="w-1.5 h-1.5 bg-success rounded-full"></span>
-            Cloud + Firestore Online
+            Local Mode Active
           </div>
         </div>
       </div>
@@ -146,7 +145,7 @@ const AdminPanel: React.FC = () => {
             <motion.div key="hero" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-3xl space-y-12">
               <div className="space-y-4">
                 <h2 className="text-4xl font-serif italic">Hero Configuration</h2>
-                <p className="text-zinc-500">Edit the primary landing message. Changes sync instantly to Firestore.</p>
+                <p className="text-zinc-500">Edit the primary landing message. Updates are local.</p>
               </div>
 
               <div className="grid gap-8">
@@ -186,7 +185,7 @@ const AdminPanel: React.FC = () => {
               <div className="flex justify-between items-end">
                 <div className="space-y-4">
                   <h2 className="text-4xl font-serif italic">Archive Inventory</h2>
-                  <p className="text-zinc-500">Manage items stored in the Firestore database.</p>
+                  <p className="text-zinc-500">Manage items in local inventory.</p>
                 </div>
                 <button 
                   onClick={() => setEditingProduct({ id: 'PX-' + Date.now(), status: ItemStatus.AVAILABLE, details: [], carbonSaved: '0kg', category: 'Outerwear', era: 'VINTAGE_BASE' })}
@@ -276,7 +275,7 @@ const AdminPanel: React.FC = () => {
             <motion.div key="social" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-3xl space-y-12">
               <div className="space-y-4">
                 <h2 className="text-4xl font-serif italic">Neuromarketing Engine</h2>
-                <p className="text-zinc-500">Tune psychological triggers stored in Firestore.</p>
+                <p className="text-zinc-500">Tune psychological triggers.</p>
               </div>
 
               <div className="space-y-10">
