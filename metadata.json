@@ -1,5 +1,8 @@
 {
   "name": "PixelPunk Archive Pro",
-  "description": "Premium curated vintage archive powered by Cloudinary CDN for ultra-fast media delivery.",
-  "requestFramePermissions": []
+  "description": "Premium curated vintage archive powered by Cloudinary CDN with integrated AI Curator for historical identification and conceptual styling.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
 }
