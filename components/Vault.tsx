@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCMS } from '../context/CMSContext';
 import { ItemStatus, Product } from '../types';
+import { optimizeCloudinaryUrl } from '../services/cloudinary';
 
 interface VaultProps {
   onAddToCart: (product: Product) => void;
@@ -63,18 +64,17 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart, onViewProduct }) => {
                 className="vintage-card rounded-[2rem] overflow-hidden group transition-all duration-500 border border-white/5 hover:border-primary/20"
               >
                 <div className="flex flex-col sm:flex-row h-full">
-                  {/* Image Section */}
                   <div 
                     className="relative w-full sm:w-[45%] aspect-[4/5] sm:aspect-auto overflow-hidden cursor-pointer"
                     onClick={() => onViewProduct(product)}
                   >
                     <img
-                      src={product.imageUrl}
+                      src={optimizeCloudinaryUrl(product.imageUrl, 600)}
                       alt={product.name}
+                      loading="lazy"
                       className="w-full h-full object-cover grayscale-[0.2] transition-transform duration-[2s] group-hover:scale-105 group-hover:grayscale-0"
                     />
                     
-                    {/* Urgency Badge Overlay */}
                     {product.status === ItemStatus.AVAILABLE && (
                       <div className="absolute top-6 right-6">
                         <div className="bg-red-500/90 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl animate-pulse">
@@ -102,13 +102,12 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart, onViewProduct }) => {
                     )}
                   </div>
 
-                  {/* Content Section */}
                   <div className="flex-1 p-10 flex flex-col justify-between">
                     <div className="space-y-8">
                       <div className="space-y-2">
                         <div className="flex justify-between items-start">
                           <span className="text-accent text-[11px] font-bold uppercase tracking-widest">{product.category}</span>
-                          <span className="text-zinc-500 text-[10px] font-bold">{Math.floor(Math.random() * 20) + 5} Active Views</span>
+                          <span className="text-zinc-500 text-[10px] font-bold">Verified Origin</span>
                         </div>
                         <h3 
                           className="text-3xl font-serif font-medium leading-tight text-zinc-100 group-hover:text-primary transition-colors cursor-pointer"

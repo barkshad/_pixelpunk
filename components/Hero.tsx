@@ -8,7 +8,6 @@ const Hero: React.FC = () => {
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center pt-32 pb-20 overflow-hidden bg-darker">
-      {/* Subtle Grainy Background effect */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(129,140,248,0.05)_0%,transparent_70%)]"></div>
 
       <div className="container mx-auto px-6 relative z-10">
@@ -63,7 +62,6 @@ const Hero: React.FC = () => {
         </div>
       </div>
       
-      {/* Visual bottom hint */}
       <motion.div 
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 3, repeat: Infinity }}

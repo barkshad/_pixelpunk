@@ -15,8 +15,6 @@ interface CMSContextType {
   resetToDefaults: () => Promise<void>;
 }
 
-const STORAGE_KEY = 'pixelpunk_archive_cms_v1';
-
 const DEFAULT_CONTENT: SiteContent = {
   hero: {
     slogan: "CURATING THE FUTURE ARCHIVE",
@@ -45,70 +43,69 @@ export const CMSProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [content, setContent] = useState<SiteContent>(DEFAULT_CONTENT);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Initial Load from LocalStorage
+  // Simulate initial data loading
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        setContent(JSON.parse(saved));
-      } catch (e) {
-        console.error("Failed to parse saved archive content", e);
-      }
-    }
-    setIsLoading(false);
+    const timer = setTimeout(() => {
+      setContent(DEFAULT_CONTENT);
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
   }, []);
 
-  // Helper to persist changes
-  const saveToStorage = (newContent: SiteContent) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newContent));
-    setContent(newContent);
-  };
-
   const updateHero = async (hero: SiteContent['hero']) => {
-    saveToStorage({ ...content, hero });
+    setContent(prev => ({ ...prev, hero }));
   };
 
   const updateMarquee = async (marquee: string[]) => {
-    saveToStorage({ ...content, marquee });
+    setContent(prev => ({ ...prev, marquee }));
   };
 
   const updateFomo = async (fomoMessages: string[]) => {
-    saveToStorage({ ...content, fomoMessages });
+    setContent(prev => ({ ...prev, fomoMessages }));
   };
 
   const upsertProduct = async (product: Product) => {
-    const newProducts = [...content.products];
-    const index = newProducts.findIndex(p => p.id === product.id);
-    if (index >= 0) {
-      newProducts[index] = product;
-    } else {
-      newProducts.unshift(product);
-    }
-    saveToStorage({ ...content, products: newProducts });
+    setContent(prev => {
+      const existingIdx = prev.products.findIndex(p => p.id === product.id);
+      const newProducts = [...prev.products];
+      if (existingIdx >= 0) {
+        newProducts[existingIdx] = product;
+      } else {
+        newProducts.push(product);
+      }
+      return { ...prev, products: newProducts };
+    });
   };
 
   const deleteProduct = async (id: string) => {
-    saveToStorage({ ...content, products: content.products.filter(p => p.id !== id) });
+    setContent(prev => ({
+      ...prev,
+      products: prev.products.filter(p => p.id !== id)
+    }));
   };
 
   const upsertArchiveItem = async (item: ArchiveItem) => {
-    const newItems = [...content.archiveItems];
-    const index = newItems.findIndex(i => i.id === item.id);
-    if (index >= 0) {
-      newItems[index] = item;
-    } else {
-      newItems.unshift(item);
-    }
-    saveToStorage({ ...content, archiveItems: newItems });
+    setContent(prev => {
+      const existingIdx = prev.archiveItems.findIndex(i => i.id === item.id);
+      const newItems = [...prev.archiveItems];
+      if (existingIdx >= 0) {
+        newItems[existingIdx] = item;
+      } else {
+        newItems.push(item);
+      }
+      return { ...prev, archiveItems: newItems };
+    });
   };
 
   const deleteArchiveItem = async (id: string) => {
-    saveToStorage({ ...content, archiveItems: content.archiveItems.filter(i => i.id !== id) });
+    setContent(prev => ({
+      ...prev,
+      archiveItems: prev.archiveItems.filter(i => i.id !== id)
+    }));
   };
 
   const resetToDefaults = async () => {
-    if (confirm("Reset all site content to defaults? This will overwrite your local changes.")) {
-      localStorage.removeItem(STORAGE_KEY);
+    if (confirm("Reset all site content to defaults? This will revert local changes.")) {
       setContent(DEFAULT_CONTENT);
     }
   };

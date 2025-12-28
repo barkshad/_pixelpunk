@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCMS } from '../context/CMSContext';
 import { ItemStatus, Product } from '../types';
+import { uploadToCloudinary } from '../services/cloudinary';
 
 const AdminPanel: React.FC = () => {
   const { content, isLoading, updateHero, updateMarquee, updateFomo, upsertProduct, deleteProduct, resetToDefaults } = useCMS();
@@ -22,21 +24,16 @@ const AdminPanel: React.FC = () => {
     }
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
         setIsUploading(true);
-        // Use FileReader to convert image to base64 for local storage
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64String = reader.result as string;
-          callback(base64String);
-          setIsUploading(false);
-        };
-        reader.readAsDataURL(file);
-      } catch (err) {
-        alert("Failed to process image.");
+        const url = await uploadToCloudinary(file);
+        setEditingProduct(prev => ({ ...prev, imageUrl: url }));
+      } catch (err: any) {
+        alert("Upload Failed: " + err.message);
+      } finally {
         setIsUploading(false);
       }
     }
@@ -46,8 +43,8 @@ const AdminPanel: React.FC = () => {
     setIsSaving(true);
     try {
       await fn();
-    } catch (err) {
-      alert("Failed to sync changes.");
+    } catch (err: any) {
+      alert("Operation failed: " + err.message);
     } finally {
       setIsSaving(false);
     }
@@ -98,12 +95,12 @@ const AdminPanel: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-[6000] bg-darker flex flex-col lg:flex-row overflow-hidden">
-      {isSaving && (
-        <div className="absolute inset-0 z-[8000] bg-darker/60 backdrop-blur-sm flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-xs font-bold uppercase tracking-widest text-primary">Saving to Local Archive...</p>
-          </div>
+      {(isSaving || isUploading) && (
+        <div className="absolute inset-0 z-[8000] bg-darker/60 backdrop-blur-sm flex flex-col items-center justify-center gap-4">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-xs font-bold uppercase tracking-widest text-primary">
+            {isUploading ? "Uploading to Cloudinary CDN..." : "Syncing with Firestore Archive..."}
+          </p>
         </div>
       )}
 
@@ -137,7 +134,7 @@ const AdminPanel: React.FC = () => {
           </button>
           <div className="text-[10px] text-zinc-700 font-bold uppercase tracking-widest text-center flex items-center justify-center gap-2">
             <span className="w-1.5 h-1.5 bg-success rounded-full"></span>
-            Local Storage Online
+            Cloud + Firestore Online
           </div>
         </div>
       </div>
@@ -149,7 +146,7 @@ const AdminPanel: React.FC = () => {
             <motion.div key="hero" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-3xl space-y-12">
               <div className="space-y-4">
                 <h2 className="text-4xl font-serif italic">Hero Configuration</h2>
-                <p className="text-zinc-500">Edit the primary landing message. Changes persist in your browser's local storage.</p>
+                <p className="text-zinc-500">Edit the primary landing message. Changes sync instantly to Firestore.</p>
               </div>
 
               <div className="grid gap-8">
@@ -158,7 +155,7 @@ const AdminPanel: React.FC = () => {
                   <input 
                     type="text" 
                     value={content.hero.slogan} 
-                    onChange={e => updateHero({ ...content.hero, slogan: e.target.value })}
+                    onChange={e => handleCommit(() => updateHero({ ...content.hero, slogan: e.target.value }))}
                     className="w-full bg-zinc-900 border border-white/5 p-5 rounded-2xl text-white font-medium" 
                   />
                 </div>
@@ -167,7 +164,7 @@ const AdminPanel: React.FC = () => {
                   <input 
                     type="text" 
                     value={content.hero.title} 
-                    onChange={e => updateHero({ ...content.hero, title: e.target.value })}
+                    onChange={e => handleCommit(() => updateHero({ ...content.hero, title: e.target.value }))}
                     className="w-full bg-zinc-900 border border-white/5 p-5 rounded-2xl text-white text-3xl font-serif italic" 
                   />
                 </div>
@@ -176,7 +173,7 @@ const AdminPanel: React.FC = () => {
                   <textarea 
                     rows={4}
                     value={content.hero.subtitle} 
-                    onChange={e => updateHero({ ...content.hero, subtitle: e.target.value })}
+                    onChange={e => handleCommit(() => updateHero({ ...content.hero, subtitle: e.target.value }))}
                     className="w-full bg-zinc-900 border border-white/5 p-5 rounded-2xl text-zinc-400 font-medium leading-relaxed" 
                   />
                 </div>
@@ -188,8 +185,8 @@ const AdminPanel: React.FC = () => {
             <motion.div key="inventory" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-12">
               <div className="flex justify-between items-end">
                 <div className="space-y-4">
-                  <h2 className="text-4xl font-serif italic">Local Inventory</h2>
-                  <p className="text-zinc-500">Manage archive items stored locally.</p>
+                  <h2 className="text-4xl font-serif italic">Archive Inventory</h2>
+                  <p className="text-zinc-500">Manage items stored in the Firestore database.</p>
                 </div>
                 <button 
                   onClick={() => setEditingProduct({ id: 'PX-' + Date.now(), status: ItemStatus.AVAILABLE, details: [], carbonSaved: '0kg', category: 'Outerwear', era: 'VINTAGE_BASE' })}
@@ -236,41 +233,21 @@ const AdminPanel: React.FC = () => {
                             <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Era & Origin</label>
                             <input value={editingProduct.era || ""} onChange={e => setEditingProduct({...editingProduct, era: e.target.value})} className="w-full bg-zinc-950 border border-white/10 p-4 rounded-xl" />
                           </div>
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Status</label>
-                            <select 
-                                value={editingProduct.status} 
-                                onChange={e => setEditingProduct({...editingProduct, status: e.target.value as ItemStatus})}
-                                className="w-full bg-zinc-950 border border-white/10 p-4 rounded-xl text-white"
-                            >
-                                <option value={ItemStatus.AVAILABLE}>Available</option>
-                                <option value={ItemStatus.SOLD}>Sold</option>
-                            </select>
-                          </div>
                         </div>
                         <div className="space-y-6">
-                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Visual Asset (Local Storage)</label>
+                          <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Visual Asset (Cloudinary CDN)</label>
                           <div className="relative group">
                             <div className="w-full aspect-square bg-zinc-950 rounded-2xl overflow-hidden border border-white/10">
-                              {isUploading ? (
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-10">
-                                  <div className="flex flex-col items-center gap-2">
-                                    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                    <span className="text-[8px] font-bold text-white uppercase tracking-widest">Processing Image...</span>
-                                  </div>
-                                </div>
-                              ) : (
-                                <img src={editingProduct.imageUrl || "https://picsum.photos/400/500"} className="w-full h-full object-cover grayscale-[0.5]" />
-                              )}
+                              <img src={editingProduct.imageUrl || "https://picsum.photos/400/500"} className="w-full h-full object-cover grayscale-[0.5]" />
                             </div>
                             <input 
                               type="file" 
-                              accept="image/*"
-                              onChange={e => handleImageUpload(e, (url) => setEditingProduct({...editingProduct, imageUrl: url}))}
+                              accept="image/*,video/*"
+                              onChange={handleFileChange}
                               className="mt-4 block w-full text-xs text-zinc-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-zinc-800 file:text-white hover:file:bg-primary transition-all cursor-pointer" 
                             />
                           </div>
-                          <p className="text-[9px] text-zinc-600 uppercase tracking-widest italic">Note: High-res images are saved as base64 in local storage.</p>
+                          <p className="text-[9px] text-zinc-600 uppercase tracking-widest italic">Note: Media is served optimized via ds2mbrzcn.cloudinary.com</p>
                         </div>
                       </div>
 
@@ -286,7 +263,7 @@ const AdminPanel: React.FC = () => {
                         })}
                         className="w-full btn-vintage py-6 rounded-full font-bold uppercase tracking-widest shadow-2xl disabled:opacity-50"
                       >
-                        Save Record Locally
+                        Publish to Global Archive
                       </button>
                     </motion.div>
                   </div>
@@ -299,7 +276,7 @@ const AdminPanel: React.FC = () => {
             <motion.div key="social" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="max-w-3xl space-y-12">
               <div className="space-y-4">
                 <h2 className="text-4xl font-serif italic">Neuromarketing Engine</h2>
-                <p className="text-zinc-500">Tune psychological triggers stored locally.</p>
+                <p className="text-zinc-500">Tune psychological triggers stored in Firestore.</p>
               </div>
 
               <div className="space-y-10">
@@ -313,11 +290,11 @@ const AdminPanel: React.FC = () => {
                           onChange={e => {
                             const newFomo = [...content.fomoMessages];
                             newFomo[idx] = e.target.value;
-                            updateFomo(newFomo);
+                            handleCommit(() => updateFomo(newFomo));
                           }}
                           className="flex-1 bg-zinc-900 border border-white/5 p-4 rounded-xl text-sm" 
                         />
-                        <button onClick={() => updateFomo(content.fomoMessages.filter((_, i) => i !== idx))} className="text-red-500/30 hover:text-red-500 p-2">✕</button>
+                        <button onClick={() => handleCommit(() => updateFomo(content.fomoMessages.filter((_, i) => i !== idx)))} className="text-red-500/30 hover:text-red-500 p-2">✕</button>
                       </div>
                     ))}
                     <button onClick={() => updateFomo([...content.fomoMessages, "A new collector is viewing..."])} className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest hover:text-white">+ Add New Trigger</button>

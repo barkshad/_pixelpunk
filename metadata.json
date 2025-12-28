@@ -1,5 +1,5 @@
 {
-  "name": "PixelPunk Archive",
-  "description": "Where rare vintage meets modern silhouettes. A curated shop for high-quality clothing that tells a story and fits your current lifestyle perfectly.",
+  "name": "PixelPunk Archive Pro",
+  "description": "Premium curated vintage archive powered by Cloudinary CDN for ultra-fast media delivery and Firebase Firestore for real-time collection management.",
   "requestFramePermissions": []
 }
