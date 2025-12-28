@@ -6,9 +6,10 @@ import { ItemStatus, Product } from '../types';
 
 interface VaultProps {
   onAddToCart: (product: Product) => void;
+  onViewProduct: (product: Product) => void;
 }
 
-const Vault: React.FC<VaultProps> = ({ onAddToCart }) => {
+const Vault: React.FC<VaultProps> = ({ onAddToCart, onViewProduct }) => {
   const [activeCategory, setActiveCategory] = useState('All');
   
   const categories = ['All', 'Outerwear', 'Vests', 'Tops', 'Bottoms'];
@@ -24,8 +25,8 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart }) => {
             <span className="text-primary font-serif italic text-lg block">Curated Selection</span>
             <h2 className="text-5xl md:text-7xl font-serif font-medium tracking-tight">The Latest Finds</h2>
             <p className="text-zinc-500 text-lg md:text-xl font-medium leading-relaxed">
-              Every item is a singular piece of history, verified for authenticity and quality. 
-              Once it's gone, it's gone.
+              Clothes that look great today and carry a piece of history. 
+              Each item is one-of-a-kind. When it's gone, it truly is gone forever.
             </p>
           </div>
           
@@ -62,21 +63,29 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart }) => {
               >
                 <div className="flex flex-col sm:flex-row h-full">
                   {/* Image Section */}
-                  <div className="relative w-full sm:w-[45%] aspect-[4/5] sm:aspect-auto overflow-hidden">
+                  <div 
+                    className="relative w-full sm:w-[45%] aspect-[4/5] sm:aspect-auto overflow-hidden cursor-pointer"
+                    onClick={() => onViewProduct(product)}
+                  >
                     <img
                       src={product.imageUrl}
                       alt={product.name}
                       className="w-full h-full object-cover grayscale-[0.2] transition-transform duration-[2s] group-hover:scale-105 group-hover:grayscale-0"
                     />
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="bg-white/90 backdrop-blur-md text-zinc-900 px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest shadow-xl">
+                        View Story
+                      </span>
+                    </div>
                     <div className="absolute top-6 left-6">
                       <div className="bg-zinc-950/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-lg">
-                        <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest font-mono">CODE_{product.id}</span>
+                        <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest font-mono">{product.era}</span>
                       </div>
                     </div>
                     {product.status === ItemStatus.SOLD && (
                       <div className="absolute inset-0 bg-zinc-950/70 backdrop-blur-sm flex items-center justify-center p-8 text-center">
                         <div className="border border-white/20 px-8 py-6 rounded-lg rotate-[-10deg]">
-                          <span className="text-2xl font-serif italic text-white tracking-wide">Archived</span>
+                          <span className="text-2xl font-serif italic text-white tracking-wide">In Private Collection</span>
                         </div>
                       </div>
                     )}
@@ -88,25 +97,26 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart }) => {
                       <div className="space-y-2">
                         <div className="flex justify-between items-start">
                           <span className="text-accent text-[11px] font-bold uppercase tracking-widest">{product.category}</span>
-                          <span className="text-zinc-600 text-[10px] font-bold uppercase tracking-widest font-mono">{product.era}</span>
                         </div>
-                        <h3 className="text-3xl font-serif font-medium leading-tight text-zinc-100 group-hover:text-primary transition-colors">
+                        <h3 
+                          className="text-3xl font-serif font-medium leading-tight text-zinc-100 group-hover:text-primary transition-colors cursor-pointer"
+                          onClick={() => onViewProduct(product)}
+                        >
                           {product.name}
                         </h3>
                         <div className="text-2xl font-serif text-zinc-400 italic">{product.price}</div>
                       </div>
 
-                      <p className="text-zinc-500 text-sm font-medium leading-relaxed italic">
+                      <p className="text-zinc-500 text-sm font-medium leading-relaxed italic line-clamp-2">
                         {product.provenance}
                       </p>
 
-                      <div className="flex flex-wrap gap-2">
-                        {product.details.map((detail, idx) => (
-                          <div key={idx} className="px-3 py-1.5 rounded-md bg-zinc-900/50 border border-white/5 text-[10px] text-zinc-400 font-bold uppercase tracking-wide">
-                            {detail}
-                          </div>
-                        ))}
-                      </div>
+                      <button 
+                        onClick={() => onViewProduct(product)}
+                        className="text-[10px] font-bold text-primary uppercase tracking-[0.2em] border-b border-primary/30 pb-1 self-start hover:border-primary transition-all"
+                      >
+                        Read Full Story →
+                      </button>
                     </div>
 
                     <div className="mt-12">
@@ -119,7 +129,7 @@ const Vault: React.FC<VaultProps> = ({ onAddToCart }) => {
                             : 'bg-zinc-800 text-zinc-600 cursor-not-allowed'
                         }`}
                       >
-                        {product.status === ItemStatus.AVAILABLE ? 'Claim Item' : 'Sold Out'}
+                        {product.status === ItemStatus.AVAILABLE ? 'Secure this item' : 'Sold Out'}
                       </button>
                     </div>
                   </div>

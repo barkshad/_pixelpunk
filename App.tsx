@@ -11,12 +11,14 @@ import Process from './components/Process';
 import Testimonials from './components/Testimonials';
 import CartSidebar from './components/CartSidebar';
 import LoginModal from './components/LoginModal';
+import ProductModal from './components/ProductModal';
 import { Product } from './types';
 
 const App: React.FC = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [cart, setCart] = useState<Product[]>([]);
   
   const { scrollYProgress } = useScroll();
@@ -50,30 +52,19 @@ const App: React.FC = () => {
       
       if (href && href.startsWith('#')) {
         e.preventDefault();
-
-        // Fix: document.querySelector('#') is not a valid CSS selector and throws SyntaxError.
-        // If the href is just '#', it typically means "scroll to top".
         if (href === '#') {
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
-
         try {
           const element = document.querySelector(href);
           if (element) {
-            const offset = 80; // Accounting for the fixed header
+            const offset = 80;
             const bodyRect = document.body.getBoundingClientRect().top;
             const elementRect = element.getBoundingClientRect().top;
             const elementPosition = elementRect - bodyRect;
             const offsetPosition = elementPosition - offset;
-
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: 'smooth'
-            });
+            window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
           }
         } catch (error) {
           console.warn(`Could not navigate to selector: ${href}`, error);
@@ -110,29 +101,32 @@ const App: React.FC = () => {
       <main className="relative z-10">
         <Hero />
         
-        {/* News Marquee - More Curated and Warm */}
+        {/* News Marquee - Welcoming and Convincing */}
         <div className="py-4 bg-zinc-900 border-y border-white/5 overflow-hidden whitespace-nowrap shadow-inner">
           <div className="inline-block animate-[marquee_50s_linear_infinite]">
             {[1, 2, 3].map(i => (
               <React.Fragment key={i}>
                 <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
                   <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                  New Items Added This Morning
+                  Sustainable Fashion: Why buying old is better for the planet
                 </span>
                 <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
                   <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                  Safe Delivery to Your Doorstep
+                  Safe Shipping: We deliver happiness, anywhere in the world
                 </span>
                 <span className="font-serif italic text-sm tracking-wide mx-12 text-zinc-400 flex items-center gap-4">
                   <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                  Check our Guide on Vintage Clothing Care
+                  Verified Authenticity: Every piece is double-checked by our team
                 </span>
               </React.Fragment>
             ))}
           </div>
         </div>
 
-        <Vault onAddToCart={addToCart} />
+        <Vault 
+          onAddToCart={addToCart} 
+          onViewProduct={(product) => setSelectedProduct(product)}
+        />
         
         <Process />
         
@@ -156,6 +150,13 @@ const App: React.FC = () => {
         {isLoginOpen && (
           <LoginModal 
             onClose={() => setIsLoginOpen(false)} 
+          />
+        )}
+        {selectedProduct && (
+          <ProductModal 
+            product={selectedProduct} 
+            onClose={() => setSelectedProduct(null)}
+            onAddToCart={addToCart}
           />
         )}
       </AnimatePresence>
