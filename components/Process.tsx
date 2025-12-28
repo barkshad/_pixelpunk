@@ -6,26 +6,26 @@ const Process: React.FC = () => {
   const steps = [
     {
       id: '01',
-      title: 'Global Scan',
-      desc: 'Our network monitors private estate sales and archival warehouses in major cultural hubs.',
-      icon: '🔍'
+      title: 'Searching Everywhere',
+      desc: 'We look through vintage collections and markets all over the world to find the best items.',
+      icon: '🌍'
     },
     {
       id: '02',
-      title: 'Verification',
-      desc: '12-point authenticity check performed by our lab specialists including fabric DNA and era marking.',
-      icon: '🛡️'
+      title: 'Checking Quality',
+      desc: 'Our experts check every item to make sure it is 100% real and in great condition.',
+      icon: '✅'
     },
     {
       id: '03',
-      title: 'Archive Restoration',
-      desc: 'Professional cleaning and structural reinforcement using era-accurate materials.',
+      title: 'Carefully Cleaning',
+      desc: 'Every item is professionally cleaned and fixed up so it feels like new for you.',
       icon: '✨'
     },
     {
       id: '04',
-      title: 'Secure Release',
-      desc: 'Items are logged into the Vault and released via encrypted protocols to new owners.',
+      title: 'Shipping to You',
+      desc: 'We pack your items safely and ship them fast so you can start wearing them.',
       icon: '📦'
     }
   ];
@@ -34,10 +34,10 @@ const Process: React.FC = () => {
     <section id="process" className="py-24 sm:py-32 bg-dark">
       <div className="container mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-20 space-y-6">
-          <span className="text-primary text-xs font-black uppercase tracking-[0.5em]">System Logic</span>
-          <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter italic">The Protocol</h2>
-          <p className="text-slate-400 font-medium text-lg leading-relaxed">
-            How we ensure every artifact in our collection is authentic, rare, and ready for your collection.
+          <span className="text-primary text-xs font-bold uppercase tracking-[0.3em]">How it Works</span>
+          <h2 className="text-5xl md:text-7xl font-extrabold tracking-tight">Our Simple Way</h2>
+          <p className="text-slate-400 font-medium text-lg md:text-xl leading-relaxed">
+            We handle everything from finding the clothes to checking their quality, so you can shop with confidence.
           </p>
         </div>
 
@@ -51,15 +51,15 @@ const Process: React.FC = () => {
               transition={{ delay: idx * 0.1 }}
               className="glass-card p-10 rounded-[3rem] space-y-8 group hover:border-primary/40 transition-all border border-white/5 relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 p-8 opacity-5 text-8xl font-black group-hover:scale-110 transition-transform">
+              <div className="absolute top-0 right-0 p-8 opacity-[0.03] text-9xl font-black">
                 {step.id}
               </div>
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform shadow-inner border border-primary/20">
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-primary/20">
                 {step.icon}
               </div>
               <div className="space-y-4 relative z-10">
-                <h4 className="text-2xl font-black uppercase tracking-tight">{step.title}</h4>
-                <p className="text-sm text-slate-400 font-medium leading-relaxed uppercase tracking-tight">
+                <h4 className="text-2xl font-bold tracking-tight">{step.title}</h4>
+                <p className="text-base text-slate-400 font-medium leading-relaxed">
                   {step.desc}
                 </p>
               </div>

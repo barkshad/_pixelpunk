@@ -19,10 +19,10 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onCartOpen, onLoginOpen }) =
   }, []);
 
   const navLinks = [
-    { name: 'Collections', href: '#vault' },
-    { name: 'The Protocol', href: '#process' },
-    { name: 'Archive', href: '#archive' },
-    { name: 'Sourcing', href: '#services' },
+    { name: 'Shop All', href: '#vault' },
+    { name: 'How it Works', href: '#process' },
+    { name: 'Style Gallery', href: '#archive' },
+    { name: 'Find for Me', href: '#services' },
   ];
 
   return (
@@ -35,10 +35,12 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onCartOpen, onLoginOpen }) =
     >
       <div className="container mx-auto px-6 flex justify-between items-center">
         <a href="#" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center font-bold text-white group-hover:rotate-12 transition-transform shadow-lg shadow-primary/20">
-            P
+          <div className="w-10 h-10 bg-primary rounded-2xl flex items-center justify-center font-bold text-white group-hover:rotate-6 transition-transform shadow-lg shadow-primary/20">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
           </div>
-          <span className="text-2xl font-black tracking-tighter font-display uppercase italic">
+          <span className="text-2xl font-extrabold tracking-tight font-display">
             pixelpunk
           </span>
         </a>
@@ -50,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onCartOpen, onLoginOpen }) =
               <a
                 key={link.name}
                 href={link.href}
-                className="text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-primary transition-colors"
+                className="text-sm font-semibold text-slate-300 hover:text-white transition-colors"
               >
                 {link.name}
               </a>
@@ -60,22 +62,22 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onCartOpen, onLoginOpen }) =
           <div className="flex items-center gap-5">
             <button 
               onClick={onCartOpen}
-              className="relative p-2.5 text-slate-300 hover:text-white transition-colors bg-white/5 rounded-xl border border-white/5 hover:border-white/20"
+              className="relative p-3 text-slate-300 hover:text-white transition-colors bg-white/5 rounded-2xl border border-white/5 hover:border-white/20"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-accent text-darker text-[10px] font-black rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg">
                   {cartCount}
                 </span>
               )}
             </button>
             <button 
               onClick={onLoginOpen}
-              className="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest border border-primary/30 text-primary hover:bg-primary hover:text-white transition-all shadow-md active:scale-95"
+              className="px-6 py-3 rounded-2xl text-sm font-bold bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all active:scale-95"
             >
-              Access ID
+              Log In
             </button>
           </div>
         </nav>
@@ -90,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onCartOpen, onLoginOpen }) =
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
             {cartCount > 0 && (
-              <span className="absolute top-0 right-0 w-4 h-4 bg-accent text-darker text-[9px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute top-0 right-0 w-4 h-4 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                 {cartCount}
               </span>
             )}
@@ -123,7 +125,7 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onCartOpen, onLoginOpen }) =
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className="text-2xl font-black uppercase tracking-tighter text-slate-100"
+                  className="text-2xl font-bold text-slate-100"
                 >
                   {link.name}
                 </a>
@@ -131,9 +133,9 @@ const Header: React.FC<HeaderProps> = ({ cartCount, onCartOpen, onLoginOpen }) =
               <hr className="border-white/5 my-2" />
               <button 
                 onClick={() => { onLoginOpen(); setIsMenuOpen(false); }}
-                className="w-full btn-primary py-5 rounded-2xl font-black uppercase tracking-widest text-sm shadow-xl"
+                className="w-full btn-primary py-5 rounded-2xl font-bold text-lg shadow-xl"
               >
-                Sync Identity
+                Sign In / Join
               </button>
             </div>
           </motion.div>

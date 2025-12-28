@@ -36,45 +36,45 @@ const Hero: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-slate-900/60 border border-white/10 mb-12 shadow-xl backdrop-blur-xl"
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-slate-900/60 border border-white/10 mb-10 shadow-xl backdrop-blur-xl"
           >
             <span className="flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-accent opacity-75"></span>
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-accent shadow-[0_0_10px_rgba(34,211,238,0.8)]"></span>
             </span>
-            <span className="text-[10px] font-black text-slate-100 tracking-[0.3em] uppercase">System Live // v2.4 Active</span>
+            <span className="text-xs font-bold text-slate-100 uppercase tracking-widest">New Items Added Today</span>
           </motion.div>
 
           <motion.h1 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-7xl md:text-9xl lg:text-[10rem] font-black tracking-tighter leading-[0.8] mb-12 text-balance italic uppercase"
+            className="text-7xl md:text-8xl lg:text-9xl font-extrabold tracking-tight leading-[0.9] mb-10"
           >
-            Find Rare. <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">Wear unique.</span>
+            Cool Clothes. <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">Easy to Find.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="max-w-2xl mx-auto text-lg md:text-2xl text-slate-300 mb-16 font-medium leading-relaxed tracking-tight"
+            className="max-w-3xl mx-auto text-xl md:text-2xl text-slate-300 mb-14 font-medium leading-relaxed"
           >
-            The world's easiest way to discover, verify, and collect one-of-a-kind archival clothing. 
-            Professional curation for the modern identity.
+            We find the best rare vintage items so you don't have to. 
+            Checked for quality, professionally cleaned, and delivered to your door.
           </motion.p>
 
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12"
+            className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-10"
           >
-            <div className="grid grid-cols-4 gap-4 md:gap-8 p-6 md:p-8 rounded-[3rem] bg-slate-900/60 border border-white/5 backdrop-blur-2xl shadow-2xl">
+            <div className="grid grid-cols-4 gap-4 p-6 rounded-[2.5rem] bg-slate-900/60 border border-white/5 backdrop-blur-2xl shadow-2xl">
               {Object.entries(timeLeft).map(([label, val]) => (
-                <div key={label} className="flex flex-col items-center min-w-[70px] md:min-w-[90px]">
-                  <div className="text-4xl md:text-5xl font-black text-white tabular-nums tracking-tighter">{val.toString().padStart(2, '0')}</div>
+                <div key={label} className="flex flex-col items-center min-w-[70px] md:min-w-[80px]">
+                  <div className="text-3xl md:text-4xl font-extrabold text-white tabular-nums tracking-tighter">{val.toString().padStart(2, '0')}</div>
                   <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">{label}</div>
                 </div>
               ))}
@@ -82,9 +82,9 @@ const Hero: React.FC = () => {
 
             <a 
               href="#vault"
-              className="btn-primary px-16 py-7 rounded-[2rem] text-lg font-black uppercase tracking-widest text-white w-full md:w-auto shadow-2xl hover:shadow-primary/40 transition-all flex items-center justify-center gap-4 group"
+              className="btn-primary px-12 py-6 rounded-3xl text-lg font-bold text-white w-full md:w-auto shadow-2xl hover:shadow-primary/40 transition-all flex items-center justify-center gap-4 group"
             >
-              Start Exploring
+              Start Shopping
               <svg className="w-6 h-6 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </a>
           </motion.div>
