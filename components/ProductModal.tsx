@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Product } from '../types';
+import { optimizeCloudinaryUrl } from '../services/cloudinary';
 
 interface ProductModalProps {
   product: Product;
@@ -28,7 +28,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
         {/* Left Side: Large Image */}
         <div className="w-full lg:w-1/2 relative bg-zinc-800 h-64 lg:h-auto">
           <img 
-            src={product.imageUrl} 
+            src={optimizeCloudinaryUrl(product.imageUrl, 1200)} 
             alt={product.name} 
             className="w-full h-full object-cover grayscale-[0.1] hover:grayscale-0 transition-all duration-700"
           />
