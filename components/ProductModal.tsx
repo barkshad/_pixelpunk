@@ -57,29 +57,30 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
 
             <div className="space-y-6">
               <div className="p-6 bg-zinc-800/50 rounded-2xl border border-white/5">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">Why this piece is special</h4>
-                <p className="text-zinc-300 leading-relaxed">
-                  This isn't just another piece of clothing. It's a hand-picked treasure that has survived decades because of its quality. 
-                  It was found in <span className="text-white font-medium">{product.provenance.split('.')[0]}</span>. 
-                  It fits modern styles perfectly while giving you a look that nobody else has.
+                <h4 className="text-xs font-bold uppercase tracking-widest text-primary mb-3">The Story Behind the Piece</h4>
+                <p className="text-zinc-300 leading-relaxed mb-4">
+                  {product.provenance}
+                </p>
+                <p className="text-zinc-400 text-sm italic">
+                  "This item was selected because its silhouette is more relevant today than when it was first made. It's the ultimate 'if you know, you know' addition to your wardrobe."
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-5 rounded-2xl bg-zinc-800/30 border border-white/5">
                   <div className="text-2xl mb-2">🌿</div>
-                  <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Carbon Saved</div>
-                  <div className="text-lg font-bold text-success">{product.carbonSaved}</div>
+                  <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Planet Impact</div>
+                  <div className="text-lg font-bold text-success">{product.carbonSaved} Carbon Saved</div>
                 </div>
                 <div className="p-5 rounded-2xl bg-zinc-800/30 border border-white/5">
                   <div className="text-2xl mb-2">🧵</div>
-                  <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Condition</div>
-                  <div className="text-lg font-bold text-white">Excellent</div>
+                  <div className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">Wearability</div>
+                  <div className="text-lg font-bold text-white">Daily Ready</div>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 ml-1">Key Details</h4>
+                <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500 ml-1">Archive Details</h4>
                 <div className="flex flex-wrap gap-2">
                   {product.details.map((detail, idx) => (
                     <span key={idx} className="px-4 py-2 rounded-xl bg-zinc-800 border border-white/5 text-xs font-medium text-zinc-300">
@@ -95,11 +96,16 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                 onClick={() => { onAddToCart(product); onClose(); }}
                 className="w-full btn-vintage py-6 rounded-full text-lg shadow-2xl active:scale-95 transition-all"
               >
-                Add to My Collection
+                Claim This Unique Item
               </button>
-              <p className="text-center text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-4">
-                Free Worldwide Shipping & 14-Day Returns
-              </p>
+              <div className="flex flex-col items-center gap-2 mt-4">
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
+                  Secure Checkout • Worldwide Express Shipping
+                </p>
+                <p className="text-[10px] text-zinc-400 font-medium">
+                  Once sold, this specific item will never return to the shop.
+                </p>
+              </div>
             </div>
           </div>
         </div>

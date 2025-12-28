@@ -15,7 +15,7 @@ const Hero: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
           >
-            <span className="font-serif italic text-lg text-accent tracking-wide">ESTABLISHED 2024</span>
+            <span className="font-serif italic text-lg text-accent tracking-wide">CURATING THE FUTURE ARCHIVE</span>
           </motion.div>
 
           <motion.h1 
@@ -24,8 +24,8 @@ const Hero: React.FC = () => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="text-7xl md:text-9xl font-serif font-medium tracking-tight leading-[0.85] mb-12 text-zinc-50"
           >
-            Rare items, <br />
-            <span className="italic font-normal serif-italic text-zinc-400">found for you.</span>
+            Rare Archives. <br />
+            <span className="italic font-normal serif-italic text-zinc-400">Modern Fits.</span>
           </motion.h1>
 
           <motion.p
@@ -34,8 +34,7 @@ const Hero: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="max-w-2xl mx-auto text-lg md:text-xl text-zinc-400 mb-16 font-medium leading-relaxed"
           >
-            We explore the world to find unique clothes with a story. 
-            Every piece is carefully checked and ready for its next chapter.
+            Stop wearing the same things as everyone else. We find unique, high-quality pieces from the past that look incredible in your closet today.
           </motion.p>
 
           <motion.div 
@@ -48,14 +47,14 @@ const Hero: React.FC = () => {
               href="#vault"
               className="btn-vintage px-14 py-5 rounded-full text-base font-bold w-full sm:w-auto text-center"
             >
-              Explore the Shop
+              Shop the Collection
             </a>
             <a 
-              href="#process"
+              href="#archive"
               className="px-10 py-5 rounded-full text-zinc-400 hover:text-white font-bold text-base transition-colors flex items-center gap-3"
             >
-              How it Works
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              See the Gallery
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </a>
           </motion.div>
         </div>
