@@ -7,21 +7,21 @@ import TiltCard from './TiltCard';
 
 const Vault: React.FC = () => {
   return (
-    <section id="vault" className="py-20 sm:py-40 bg-void relative">
+    <section id="vault" className="py-16 sm:py-32 lg:py-40 bg-void relative">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div 
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-16 sm:mb-32 gap-8 sm:gap-12"
+          className="flex flex-col md:flex-row md:items-end justify-between mb-16 sm:mb-24 lg:mb-32 gap-8 sm:gap-12"
         >
           <div className="space-y-4 sm:space-y-8">
-            <div className="flex flex-wrap items-center gap-3 sm:gap-6 font-mono text-[10px] sm:text-[12px] tracking-[0.4em] sm:tracking-[0.6em] text-accent">
-              <span className="bg-accent text-void px-3 sm:px-4 py-1 font-bold rounded-full">LIVE_RECORDS</span>
+            <div className="flex flex-wrap items-center gap-3 sm:gap-6 font-mono text-[9px] sm:text-[12px] tracking-[0.3em] sm:tracking-[0.6em] text-accent">
+              <span className="bg-accent text-void px-2 sm:px-4 py-0.5 sm:py-1 font-bold rounded-full">LIVE_RECORDS</span>
               <span className="animate-pulse whitespace-nowrap">● SIGNAL_CONNECTED</span>
             </div>
-            <h2 className="text-5xl sm:text-7xl lg:text-[9rem] font-black tracking-tighter uppercase leading-[0.9] sm:leading-[0.8]">THE VAULT</h2>
+            <h2 className="text-5xl sm:text-7xl lg:text-[8rem] xl:text-[9rem] font-black tracking-tighter uppercase leading-[0.9] sm:leading-[0.8]">THE VAULT</h2>
           </div>
           <div className="md:text-right font-mono text-[10px] sm:text-[12px] text-gray-500 space-y-2 sm:space-y-3 uppercase tracking-[0.2em] sm:tracking-[0.4em] max-w-sm">
             <p>Every piece is a singular artifact from the global network.</p>
@@ -29,7 +29,7 @@ const Vault: React.FC = () => {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-10 lg:gap-x-20 gap-y-24 sm:gap-y-40">
+        <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-x-10 lg:gap-x-16 xl:gap-x-20 gap-y-24 sm:gap-y-32 lg:gap-y-40">
           {PRODUCTS.map((product, idx) => (
             <motion.div
               key={product.id}
@@ -39,9 +39,9 @@ const Vault: React.FC = () => {
               transition={{ duration: 0.8, delay: idx % 2 * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
               <TiltCard className="group">
-                <div className="flex flex-col xl:flex-row gap-8 lg:gap-12">
+                <div className="flex flex-col xl:flex-row gap-6 sm:gap-8 lg:gap-12">
                   {/* Image Part */}
-                  <div className="w-full xl:w-3/5 relative aspect-[3/4] overflow-hidden rounded-2xl sm:rounded-3xl glass-panel group-hover:shadow-[0_20px_80px_-20px_rgba(223,255,0,0.3)] transition-all duration-700">
+                  <div className="w-full xl:w-3/5 relative aspect-[4/5] sm:aspect-[3/4] overflow-hidden rounded-2xl sm:rounded-3xl glass-panel group-hover:shadow-[0_20px_80px_-20px_rgba(223,255,0,0.3)] transition-all duration-700">
                     <img
                       src={product.imageUrl}
                       alt={product.name}
@@ -50,14 +50,14 @@ const Vault: React.FC = () => {
                     />
                     
                     {/* Glass Overlays */}
-                    <div className="absolute top-4 sm:top-6 right-4 sm:right-6 glass-panel px-4 sm:px-6 py-1 sm:py-2 rounded-full font-mono text-[9px] sm:text-[11px] font-bold text-accent">
+                    <div className="absolute top-4 sm:top-6 right-4 sm:right-6 glass-panel px-3 sm:px-6 py-1 sm:py-2 rounded-full font-mono text-[9px] sm:text-[11px] font-bold text-accent">
                       #{product.id}
                     </div>
 
                     {product.status === ItemStatus.SOLD && (
                       <div className="absolute inset-0 bg-void/80 backdrop-blur-md flex items-center justify-center">
-                        <div className="glass-panel p-8 sm:p-16 rounded-full rotate-[-15deg] border-accent/50">
-                          <span className="text-2xl sm:text-4xl font-black text-accent tracking-tighter uppercase italic">ARCHIVED</span>
+                        <div className="glass-panel p-6 sm:p-12 rounded-full rotate-[-15deg] border-accent/50">
+                          <span className="text-xl sm:text-4xl font-black text-accent tracking-tighter uppercase italic">ARCHIVED</span>
                         </div>
                       </div>
                     )}
@@ -99,7 +99,7 @@ const Vault: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="mt-8 sm:mt-16">
+                    <div className="mt-8 sm:mt-12 lg:mt-16">
                       {product.status === ItemStatus.AVAILABLE ? (
                         <motion.button 
                           whileHover={{ scale: 1.02 }}

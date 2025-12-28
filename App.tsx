@@ -51,9 +51,9 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-void text-white selection:bg-accent selection:text-void overflow-x-hidden">
-      {/* Premium Mouse Follower Glow */}
+      {/* Premium Mouse Follower Glow - Hidden on very small screens to improve performance and touch UX */}
       <motion.div 
-        className="fixed top-0 left-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none z-[1]"
+        className="hidden md:block fixed top-0 left-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] pointer-events-none z-[1]"
         animate={{
           x: mousePos.x - 250,
           y: mousePos.y - 250,
@@ -76,14 +76,14 @@ const App: React.FC = () => {
         <Hero />
         
         {/* Premium Data Marquee */}
-        <div className="py-6 bg-accent border-y-4 border-void overflow-hidden whitespace-nowrap shadow-[0_0_50px_rgba(223,255,0,0.2)]">
+        <div className="py-4 sm:py-6 bg-accent border-y-2 sm:border-y-4 border-void overflow-hidden whitespace-nowrap shadow-[0_0_50px_rgba(223,255,0,0.2)]">
           <div className="inline-block animate-[marquee_25s_linear_infinite]">
             {[1, 2, 3, 4, 5].map(i => (
               <React.Fragment key={i}>
-                <span className="font-mono text-[12px] font-black tracking-[0.8em] mx-16 text-void uppercase">SYSTEM_STABLE_SIGNAL_RECOVERED</span>
-                <span className="font-mono text-[12px] font-black tracking-[0.8em] mx-16 text-void uppercase">1_OF_1_ARCHIVE_PROTOCOL_ACTIVE</span>
-                <span className="font-mono text-[12px] font-black tracking-[0.8em] mx-16 text-void uppercase border-x-2 border-void px-8">SECURED_VAULT_00</span>
-                <span className="font-mono text-[12px] font-black tracking-[0.8em] mx-16 text-void uppercase">AUTHENTIC_RECORDS_ONLY</span>
+                <span className="font-mono text-[10px] sm:text-[12px] font-black tracking-[0.4em] sm:tracking-[0.8em] mx-8 sm:mx-16 text-void uppercase">SYSTEM_STABLE_SIGNAL_RECOVERED</span>
+                <span className="font-mono text-[10px] sm:text-[12px] font-black tracking-[0.4em] sm:tracking-[0.8em] mx-8 sm:mx-16 text-void uppercase">1_OF_1_ARCHIVE_PROTOCOL_ACTIVE</span>
+                <span className="font-mono text-[10px] sm:text-[12px] font-black tracking-[0.4em] sm:tracking-[0.8em] mx-8 sm:mx-16 text-void uppercase border-x-2 border-void px-4 sm:px-8">SECURED_VAULT_00</span>
+                <span className="font-mono text-[10px] sm:text-[12px] font-black tracking-[0.4em] sm:tracking-[0.8em] mx-8 sm:mx-16 text-void uppercase">AUTHENTIC_RECORDS_ONLY</span>
               </React.Fragment>
             ))}
           </div>
@@ -92,11 +92,11 @@ const App: React.FC = () => {
         <Vault />
         
         {/* Luxury Divider */}
-        <div className="h-px bg-white/5 w-full relative mb-20">
+        <div className="h-px bg-white/5 w-full relative mb-12 sm:mb-20">
            <motion.div 
              initial={{ scale: 0.8, opacity: 0 }}
              whileInView={{ scale: 1, opacity: 1 }}
-             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 glass-panel px-16 py-3 rounded-full border-accent/30 font-mono text-[11px] text-accent tracking-[1em] uppercase"
+             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 glass-panel px-8 sm:px-16 py-2 sm:py-3 rounded-full border-accent/30 font-mono text-[9px] sm:text-[11px] text-accent tracking-[0.6em] sm:tracking-[1em] uppercase whitespace-nowrap"
            >
              CONTINUE_RECOVERY
            </motion.div>

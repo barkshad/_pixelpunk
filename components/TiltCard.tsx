@@ -13,17 +13,18 @@ const TiltCard: React.FC<TiltCardProps> = ({ children, className }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const mouseXSpring = useSpring(x);
-  const mouseYSpring = useSpring(y);
+  const mouseXSpring = useSpring(x, { stiffness: 150, damping: 15 });
+  const mouseYSpring = useSpring(y, { stiffness: 150, damping: 15 });
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Disable tilt on mobile for better accessibility and performance
+    if (window.innerWidth < 1024) return;
     if (!ref.current) return;
 
     const rect = ref.current.getBoundingClientRect();
-
     const width = rect.width;
     const height = rect.height;
 
@@ -54,7 +55,7 @@ const TiltCard: React.FC<TiltCardProps> = ({ children, className }) => {
       }}
       className={`relative ${className}`}
     >
-      <div style={{ transform: "translateZ(50px)", transformStyle: "preserve-3d" }}>
+      <div style={{ transform: "translateZ(30px)", transformStyle: "preserve-3d" }}>
         {children}
       </div>
     </motion.div>
